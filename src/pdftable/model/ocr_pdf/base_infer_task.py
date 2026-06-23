@@ -136,7 +136,14 @@ class BaseInferTask(metaclass=ABCMeta):
     def _prepare_onnx_mode(self):
         model_name_or_path = self.get_model_name_or_path()
 
-        predictor = DeployUtils.prepare_onnx_model(onnx_dir=model_name_or_path)
+        # check if GPU is available
+        use_gpu = self.device.startswith("cuda") if hasattr(self, "device") else False
+
+        predictor = DeployUtils.prepare_onnx_model(
+            onnx_dir=model_name_or_path,
+            num_threads=self._num_threads,
+            use_gpu=use_gpu
+        )
 
         self.predictor = predictor
 

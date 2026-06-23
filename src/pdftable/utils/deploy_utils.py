@@ -240,29 +240,39 @@ class DeployUtils(BaseUtil):
         return model
 
     @staticmethod
-    def prepare_onnx_model(onnx_dir, device_id=0, num_threads=4):
+    def prepare_onnx_model(onnx_dir, device_id=0, num_threads=4, use_gpu=False):
         try:
             import onnx
             import onnxruntime as ort
             from onnxconverter_common import float16
         except ImportError:
             logger.warning(
-                "The inference precision is change to 'fp32', please install the dependencies that required for 'fp16' inference, pip install onnxruntime-gpu onnx onnxconverter-common"
+                "The inference precision is change to 'fp32', please install the dependencies that required for 'fp16' inference, pip install onnxruntime onnx onnxconverter-common"
             )
 
         if onnx_dir.endswith(".onnx"):
-            fp16_model_file = onnx_dir
+            model_file = onnx_dir
+            use_fp16 = "fp16" in onnx_dir.lower()
         else:
             os.makedirs(onnx_dir, exist_ok=True)
             float_onnx_file = os.path.join(onnx_dir, "model.onnx")
             fp16_model_file = os.path.join(onnx_dir, "fp16_model.onnx")
-            if not os.path.exists(fp16_model_file):
-                onnx_model = onnx.load_model(float_onnx_file)
-                trans_model = float16.convert_float_to_float16(onnx_model, keep_io_types=True)
-                onnx.save_model(trans_model, fp16_model_file)
+            # for CPU execution, use FP32 model
+            if not use_gpu:
+                model_file = float_onnx_file
+                use_fp16 = False
+                logger.info(f"Using FP32 model for CPU inference: {float_onnx_file}")
+            else:
+                # try to use FP16 model with GPU
+                if not os.path.exists(fp16_model_file):
+                    onnx_model = onnx.load_model(float_onnx_file)
+                    trans_model = float16.convert_float_to_float16(onnx_model, keep_io_types=True)
+                    onnx.save_model(trans_model, fp16_model_file)
+                    logger.info(f"Using FP16 model for GPU inference: {float_onnx_file}")
+                model_file = fp16_model_file
+                use_fp16 = True
 
-                logger.info(f"转换ONNX 模型 到 FP16: {fp16_model_file}")
-
+        '''
         providers = [("CUDAExecutionProvider", {"device_id": device_id})]
         sess_options = ort.SessionOptions()
         # sess_options.enable_profiling = True
@@ -276,5 +286,26 @@ class DeployUtils(BaseUtil):
             "1) pip uninstall -y onnxruntime onnxruntime-gpu \n 2) pip install onnxruntime-gpu"
         )
         logger.info(f"采用ONNX FP16 推理【device_id={device_id}】：{fp16_model_file}")
+        '''
+        # configure execution provider based on GPU availability
+        sess_options = ort.SessionOptions()
+        sess_options.intra_op_num_threads = num_threads
+        sess_options.inter_op_num_threads = num_threads
+
+        if use_gpu:
+            providers = [("CUDAExecutionProvider", {"device_id": device_id}),
+                         "CPUExecutionProvider"]
+        else:
+            providers = ["CPUExecutionProvider"]
+        
+        predictor = ort.InferenceSession(model_file, sess_options=sess_options, providers=providers)
+        active_provider = predictor.get_providers()[0]
+        logger.info(f"ONNX Runtime using: {active_provider} | Model: {model_file}")
+
+        if use_gpu and "CUDAExecutionProvider" not in predictor.get_providers():
+            logger.warning(
+                "GPU (CUDA) execution provider not available"
+                "Falling back to CPU execution"
+            )
 
         return predictor

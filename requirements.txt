@@ -15,12 +15,13 @@ pypdf
 requests
 beautifulsoup4
 
-#torch
-transformers
+torch==2.12.0
+torchvision==0.27.0
+transformers==4.37.2
 pydantic
 onnxconverter_common==1.14.0
 onnx==1.17.0
-onnxruntime-gpu==1.19.2
+onnxruntime==1.19.2
 openpyxl
 addict
 yapf
