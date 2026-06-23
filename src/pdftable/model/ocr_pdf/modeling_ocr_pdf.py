@@ -41,8 +41,9 @@ class OcrDocument(object):
         self.debug = debug
         self.output_dir = output_dir
 
-        self.device = "cuda"
-        self.fp16_full_eval = True
+        # auto detect device; use CPU if CUDA is not available
+        self.device = kwargs.get("device", "cuda" if torch.cuda.is_available() else "cpu")
+        self.fp16_full_eval = True if self.device.startswith("cuda") else False
         self._predictor_type = kwargs.get("predictor_type", "onnx")
 
         self.model_dict = {

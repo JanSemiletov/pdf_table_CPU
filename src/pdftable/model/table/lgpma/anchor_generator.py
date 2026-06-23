@@ -211,7 +211,7 @@ class AnchorGenerator(object):
         else:
             return yy, xx
 
-    def grid_anchors(self, featmap_sizes, device='cuda'):
+    def grid_anchors(self, featmap_sizes, device='None'):
         """Generate grid anchors in multiple feature levels.
 
         Args:
@@ -226,6 +226,9 @@ class AnchorGenerator(object):
                 are the sizes of the corresponding feature level, \
                 num_base_anchors is the number of anchors for that level.
         """
+        if device is None:
+            device = "cuda" if torch.cuda.is_available() else "cpu"
+        
         assert self.num_levels == len(featmap_sizes)
         multi_level_anchors = []
         for i in range(self.num_levels):
@@ -241,7 +244,7 @@ class AnchorGenerator(object):
                                   base_anchors,
                                   featmap_size,
                                   stride=(16, 16),
-                                  device='cuda'):
+                                  device='None'):
         """Generate grid anchors of a single level.
 
         Note:
@@ -258,6 +261,9 @@ class AnchorGenerator(object):
         Returns:
             torch.Tensor: Anchors in the overall feature maps.
         """
+        if device is None:
+            device = "cuda" if torch.cuda.is_available() else "cpu"
+
         # keep as Tensor, so that we can covert to ONNX correctly
         feat_h, feat_w = featmap_size
         shift_x = torch.arange(0, feat_w, device=device) * stride[0]
@@ -276,7 +282,7 @@ class AnchorGenerator(object):
         # then (0, 1), (0, 2), ...
         return all_anchors
 
-    def valid_flags(self, featmap_sizes, pad_shape, device='cuda'):
+    def valid_flags(self, featmap_sizes, pad_shape, device='None'):
         """Generate valid flags of anchors in multiple feature levels.
 
         Args:
@@ -288,6 +294,9 @@ class AnchorGenerator(object):
         Return:
             list(torch.Tensor): Valid flags of anchors in multiple levels.
         """
+        if device is None:
+            device = "cuda" if torch.cuda.is_available() else "cpu"
+
         assert self.num_levels == len(featmap_sizes)
         multi_level_flags = []
         for i in range(self.num_levels):
@@ -307,7 +316,7 @@ class AnchorGenerator(object):
                                  featmap_size,
                                  valid_size,
                                  num_base_anchors,
-                                 device='cuda'):
+                                 device='None'):
         """Generate the valid flags of anchor in a single feature map.
 
         Args:
@@ -321,6 +330,9 @@ class AnchorGenerator(object):
             torch.Tensor: The valid flags of each anchor in a single level \
                 feature map.
         """
+        if device is None:
+            device = "cuda" if torch.cuda.is_available() else "cpu"
+
         feat_h, feat_w = featmap_size
         valid_h, valid_w = valid_size
         assert valid_h <= feat_h and valid_w <= feat_w

@@ -79,10 +79,11 @@ def _topk(scores, K=40):
 
     topk_scores, topk_inds = torch.topk(scores.view(batch, cat, -1), K)
 
+    device = scores.device
     topk_inds = topk_inds % (
-                torch.Tensor([height]).to(torch.int64).cuda() * torch.Tensor([width]).to(torch.int64).cuda())
-    topk_ys = (topk_inds / torch.Tensor([width]).cuda()).int().float()
-    topk_xs = (topk_inds % torch.Tensor([width]).to(torch.int64).cuda()).int().float()
+                torch.Tensor([height]).to(torch.int64).to(device) * torch.Tensor([width]).to(torch.int64).to(device))
+    topk_ys = (topk_inds / torch.Tensor([width]).to(device)).int().float()
+    topk_xs = (topk_inds % torch.Tensor([width]).to(torch.int64).to(device)).int().float()
 
     topk_score, topk_ind = torch.topk(topk_scores.view(batch, -1), K)
     topk_clses = (topk_ind // K).int()
@@ -327,8 +328,9 @@ def wireless_decode(heat, wh, ax, cr, reg=None, cat_spec_wh=False, K=100):
 
 
 def find4ps(bbox, x, y):
-    xs = torch.Tensor([bbox[0], bbox[2], bbox[4], bbox[6]]).cuda()
-    ys = torch.Tensor([bbox[1], bbox[3], bbox[5], bbox[7]]).cuda()
+    device = x.device if torch.is_tensor(x) else "cpu"
+    xs = torch.Tensor([bbox[0], bbox[2], bbox[4], bbox[6]]).to(device)
+    ys = torch.Tensor([bbox[1], bbox[3], bbox[5], bbox[7]]).to(device)
 
     dx = xs - x
     dy = ys - y
@@ -584,8 +586,9 @@ def filter(results, logi, ps, vis_thresh=0.15):
 
 def normalized_ps(ps, vocab_size):
     ps = torch.round(ps).to(torch.int64)
-    ps = torch.where(ps < vocab_size, ps, (vocab_size - 1) * torch.ones(ps.shape).to(torch.int64).cuda())
-    ps = torch.where(ps >= 0, ps, torch.zeros(ps.shape).to(torch.int64).cuda())
+    device = ps.device
+    ps = torch.where(ps < vocab_size, ps, (vocab_size - 1) * torch.ones(ps.shape).to(torch.int64).to(device))
+    ps = torch.where(ps >= 0, ps, torch.zeros(ps.shape).to(torch.int64).to(device))
     return ps
 
 
@@ -733,6 +736,7 @@ def _get_wh_feat(ind, output, ttype):
 
 def _normalized_ps(ps, vocab_size):
   ps = torch.round(ps).to(torch.int64)
-  ps = torch.where(ps < vocab_size, ps, (vocab_size-1) * torch.ones(ps.shape).to(torch.int64).cuda())
-  ps = torch.where(ps >= 0, ps, torch.zeros(ps.shape).to(torch.int64).cuda())
+  device = ps.device
+  ps = torch.where(ps < vocab_size, ps, (vocab_size-1) * torch.ones(ps.shape).to(torch.int64).to(device))
+  ps = torch.where(ps >= 0, ps, torch.zeros(ps.shape).to(torch.int64).to(device))
   return ps

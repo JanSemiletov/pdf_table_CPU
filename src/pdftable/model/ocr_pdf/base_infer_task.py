@@ -53,8 +53,15 @@ class BaseInferTask(metaclass=ABCMeta):
         self._param_updated = False
 
         self._num_threads = self.kwargs["num_threads"] if "num_threads" in self.kwargs else math.ceil(cpu_count() / 2)
-        self._infer_precision = self.kwargs["precision"] if "precision" in self.kwargs else "fp16"
-        self.eval_fp16 = True if self._infer_precision == "fp16" else False
+        # auto-detect device; use CPU if CUDA is not available
+        default_device = "cuda:0" if torch.cuda.is_available() else "cpu"
+        self.device = kwargs.get("device", default_device)
+        if "precision" in self.kwargs:
+            self._infer_precision = self.kwargs["precision"]
+        else:
+            self._infer_precision = "fp16" if self.device.startswith("cuda") else "fp32"
+        self.eval_fp16 = True if self._infer_precision == "fp16" and self.device.startswith("cuda") else False
+
         # Default to use pytorch Inference
         self._predictor_type = kwargs.get("predictor_type", "pytorch")
         # The root directory for storing Taskflow related files, default to ~/.paddlenlp.
@@ -66,7 +73,6 @@ class BaseInferTask(metaclass=ABCMeta):
         self._num_workers = kwargs.get("num_workers", 0)
         self._use_fast = kwargs.get("use_fast", True)
         self.do_transform = kwargs.get("do_transform", False)
-        self.device = kwargs.get("device", "cuda:0")
         self.output_dir = kwargs.get("output_dir", None)
         self.debug = kwargs.get("debug", True)
 

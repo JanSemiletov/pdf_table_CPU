@@ -214,8 +214,9 @@ def _axis_eval(output, mask, ind, target, logi=None, mode=None):
     dev = pred - target
     dev = torch.abs(dev)
 
-    one = torch.ones(dev.shape).cuda()
-    zero = torch.zeros(dev.shape).cuda()
+    device = dev.device
+    one = torch.ones(dev.shape).to(device)
+    zero = torch.zeros(dev.shape).to(device)
 
     true_vec = torch.where(dev < 0.5, one, zero)
     # true = torch.sum((true_vec * mask.unsqueeze(2)) == 1)

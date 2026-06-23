@@ -201,7 +201,7 @@ class AnchorHead(BaseDenseHead):
         """
         return multi_apply(self.forward_single, feats)
 
-    def get_anchors(self, featmap_sizes, img_metas, device='cuda'):
+    def get_anchors(self, featmap_sizes, img_metas, device='None'):
         """Get anchors according to feature map sizes.
 
         Args:
@@ -215,6 +215,9 @@ class AnchorHead(BaseDenseHead):
                 valid_flag_list (list[Tensor]): Valid flags of each image.
         """
         num_imgs = len(img_metas)
+
+        if device is None:
+            device = "cuda" if torch.cuda.is_available() else "cpu"
 
         # since feature map sizes of all images are the same, we only compute
         # anchors for one time
