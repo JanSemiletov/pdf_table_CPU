@@ -5,6 +5,7 @@
 # @Author   : cycloneboy
 # @Date     : 20xx/12/10 - 18:05
 
+import os
 from typing import Dict
 
 from transformers import PretrainedConfig
@@ -46,7 +47,7 @@ class LgpmaConfig(PretrainedConfig):
             model_name: str = "Lgpma",
             backbone: str = "ResNet",
             task_type: str = "PubTabNet",
-            config_file: str = f"{TABLE_ABS_PATH}/lgpma/lgpma_base.py",
+            config_file: str = os.path.join(TABLE_ABS_PATH, "lgpma", "lgpma_base.py"),
             model_path: str = "",
             debug: bool = True,
             **kwargs

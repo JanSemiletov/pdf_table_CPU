@@ -183,7 +183,7 @@ class BaseInferTask(metaclass=ABCMeta):
 
     def get_model_name_or_path(self):
         model_name_or_path = self._task_path
-        pretrain_weight_pytorch = f"{model_name_or_path}/pytorch_model.bin"
+        pretrain_weight_pytorch = os.path.join(model_name_or_path, "pytorch_model.bin")
 
         if os.path.exists(pretrain_weight_pytorch):
             return model_name_or_path

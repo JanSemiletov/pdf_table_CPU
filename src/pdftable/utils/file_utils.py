@@ -671,7 +671,7 @@ class FileUtils(BaseUtil):
         :param file_path:
         :return:
         """
-        dir_name = FileUtils.get_parent_dir_name(f"{file_path}/test.txt")
+        dir_name = FileUtils.get_parent_dir_name(os.path.join(file_path, "test.txt"))
         check_num = str(dir_name).split("-")[1]
         return int(check_num)
 
@@ -886,7 +886,7 @@ class FileUtils(BaseUtil):
 
     @staticmethod
     def get_output_dir_with_time(add_now_end=True):
-        output_dir = f"{Constants.HTML_BASE_DIR}/pdf_debug/{TimeUtils.get_time()}"
+        output_dir = os.path.join(Constants.HTML_BASE_DIR, "pdf_debug", TimeUtils.get_time())
         if add_now_end:
             output_dir = os.path.join(output_dir, TimeUtils.now_str_short())
         return output_dir

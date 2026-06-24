@@ -4,6 +4,8 @@
 # @File    ：run_table_centernet
 # @Author  ：cycloneboy
 # @Date    ：20xx/5/25 18:18
+
+import os
 from typing import Dict, Any
 
 import cv2
@@ -19,10 +21,10 @@ class RunTableCenternet(object):
 
     def __init__(self):
         self.scope_model_base_dir = Constants.SCOPE_MODEL_BASE_DIR
-        self.model_name = f"iic/cv_dla34_table-structure-recognition_cycle-centernet"
-        self.model_name_or_path = f"{self.scope_model_base_dir}/{self.model_name}"
+        self.model_name = os.path.join("iic", "cv_dla34_table-structure-recognition_cycle-centernet")
+        self.model_name_or_path = os.path.join(self.scope_model_base_dir, self.model_name)
 
-        self.image_dir = f'{Constants.OUTPUT_DIR}/image_output'
+        self.image_dir = os.path.join(Constants.OUTPUT_DIR, "image_output")
 
         self.fp16_full_eval = True
         # self.fp16_full_eval = False
@@ -48,7 +50,7 @@ class RunTableCenternet(object):
         config = TableCenterNetConfig(model_path=self.model_name_or_path)
         model = TableStructureRec(config)
 
-        save_dir = f"{Constants.DATA_DIR}/txt/model_scope/dla34_table-structure-recognition_cycle/dla34_"
+        save_dir = os.path.join(Constants.DATA_DIR, "txt", "model_scope", "dla34_table-structure-recognition_cycle", "dla34_")
         if self.show_model:
             model_net2, model_params2 = CommonUtils.print_model_param(model, save_dir=save_dir, use_numpy=True)
 
@@ -103,7 +105,7 @@ class RunTableCenternet(object):
         model_inputs = torch.rand(1, 3, 1024, 1024)
 
         model_inputs = model_inputs.to(self.device).half()
-        onnx_path = f"{self.model_name_or_path}/fp16_model.onnx"
+        onnx_path = os.path.join(self.model_name_or_path, "fp16_model.onnx")
 
         logger.info(f"model_inputs: {model_inputs.shape} - {model_inputs}")
 

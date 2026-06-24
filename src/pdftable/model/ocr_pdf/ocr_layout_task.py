@@ -144,7 +144,7 @@ class OcrLayoutTask(BaseInferTask):
                         self.save_predict(image=image, predict=pred,
                                           img_name=f"layout_{raw_file_name}.jpg")
 
-                    file_name = f"{self.output_dir}/predict_{raw_file_name}.json"
+                    file_name = os.path.join(self.output_dir, f"predict_{raw_file_name}.json")
                     new_result = []
                     for item in pred:
                         bbox = item["bbox"].tolist()

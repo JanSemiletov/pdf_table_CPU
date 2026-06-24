@@ -8,6 +8,7 @@
 """
 OCR text task
 """
+import os
 import time
 import traceback
 from copy import deepcopy
@@ -70,7 +71,7 @@ class OcrTextTask(object):
         if self.pdf_text_recognizer is not None:
             self.pdf_text_recognizer.output_dir = output_dir
 
-        FileUtils.check_file_exists(f"{output_dir}/demo.txt")
+        FileUtils.check_file_exists(os.path.join(output_dir, "demo.txt"))
 
     def init_ocr_model(self):
         start = time.time()
@@ -344,11 +345,11 @@ class OcrTextTask(object):
             logger.info(f"ocr_result_show: {ocr_result_show}")
             logger.info(f"metric: {metric}")
 
-            save_file = f"{self.output_dir}/ocr_{raw_filename}_{run_time}.jpg"
+            save_file = os.path.join(self.output_dir, f"ocr_{raw_filename}_{run_time}.jpg")
             FileUtils.check_file_exists(save_file)
 
             # 绘制Text cell
-            save_image_file = f"{self.output_dir}/{raw_filename}_text_cell.jpg"
+            save_image_file = os.path.join(self.output_dir, f"{raw_filename}_text_cell.jpg")
             image = cv2.imread(ocr_system_output.file_name)
             cell_text_image_file = TableProcessUtils.show_text_cell(image=image,
                                                                     save_image_file=save_image_file,

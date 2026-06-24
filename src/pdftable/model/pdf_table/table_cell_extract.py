@@ -5,6 +5,7 @@
 # @Author  ：cycloneboy
 # @Date    ：20xx/7/19 16:51
 
+import os
 import copy
 import time
 import traceback
@@ -144,7 +145,7 @@ class TableCellExtract(object):
             self.filtered_images = filtered_images
             self.pdf_images, self.pdf_image_mapping = PdfUtils.save_pdf_image(images=images,
                                                                               output_dir=self.output_dir,
-                                                                              image_dir=f"image/{self.page}")
+                                                                              image_dir=os.path.join("image", self.page))
             rotated_image = image_name
             logger.info(f"pdf image not need rotated: {file_name}")
         elif ocr_system_output is None or (ocr_system_output is not None and not ocr_system_output.image_rotate):
@@ -192,7 +193,7 @@ class TableCellExtract(object):
                                                                 bboxs=ocr_system_output.get_table_structure_bboxs(),
                                                                 layout_tables=self.regions,
                                                                 )
-            save_html_file = f"{self.output_dir}/{ocr_system_output.raw_filename}"
+            save_html_file = os.path.join(self.output_dir, ocr_system_output.raw_filename)
             self.table_cells = self.get_table_cell_from_ocr_system_output(ocr_system_output,
                                                                           save_html_file=save_html_file)
 
@@ -217,7 +218,7 @@ class TableCellExtract(object):
             self.scale_image_bbox_to_image()
 
         if self.debug:
-            save_image_file = f"{self.output_dir}/{self.raw_filename}_table_joint_point.jpg"
+            save_image_file = os.path.join(self.output_dir, f"{self.raw_filename}_table_joint_point.jpg")
             TableProcessUtils.save_table_join_point(image=self.image,
                                                     table_bbox_unscaled=self.table_bbox_unscaled,
                                                     save_image_file=save_image_file,
@@ -243,10 +244,10 @@ class TableCellExtract(object):
             "image_name": self.image_name,
             "image_scalers": self.image_scalers,
             "pdf_scalers": self.pdf_scalers,
-            "result_dir_url": f"{self.result_http_server}/{run_time}",
-            "show_url": f"{self.result_http_server}/{run_time}/{self.raw_filename}_show.html",
-            "line_mask_image": f"{self.output_dir}/{self.raw_filename}_line_mask.png",
-            "table_joint_point_image": f"{self.output_dir}/{self.raw_filename}_table_joint_point.jpg",
+            "result_dir_url": os.path.join(self.result_http_server, run_time),
+            "show_url": os.path.join(self.result_http_server, run_time, f"{self.raw_filename}_show.html"),
+            "line_mask_image": os.path.join(self.output_dir, f"{self.raw_filename}_line_mask.png"),
+            "table_joint_point_image": os.path.join(self.output_dir, f"{self.raw_filename}_table_joint_point.jpg"),
             "table_metric": []
         }
 
@@ -398,7 +399,7 @@ class TableCellExtract(object):
         pass
 
     def save_image_with_name(self, image, name="line_mask.png"):
-        save_image_file = f"{self.output_dir}/{self.raw_filename}_{name}"
+        save_image_file = os.path.join(self.output_dir, f"{self.raw_filename}_{name}")
         FileUtils.check_file_exists(save_image_file)
         cv2.imwrite(save_image_file, image)
         logger.info(f"save {name} image：{save_image_file}")
@@ -913,7 +914,7 @@ class TableCellExtract(object):
 
             cv2.rectangle(src_im, start_point, end_point, color, thickness)
 
-        save_image_file = f"{self.output_dir}/{self.raw_filename}{sep_file_name}{table_idx + 1}.jpg"
+        save_image_file = os.path.join(self.output_dir, f"{self.raw_filename}{sep_file_name}{table_idx + 1}.jpg")
         FileUtils.check_file_exists(save_image_file)
         cv2.imwrite(save_image_file, src_im)
 
@@ -957,7 +958,7 @@ class TableCellExtract(object):
                 # cv2.rectangle(src_im, start_point, end_point, color, thickness)
                 cv2.line(src_im, line[0], line[1], color, thickness)
 
-        save_image_file = f"{self.output_dir}/{self.raw_filename}{sep_file_name}{table_idx + 1}.jpg"
+        save_image_file = os.path.join(self.output_dir, f"{self.raw_filename}{sep_file_name}{table_idx + 1}.jpg")
         FileUtils.check_file_exists(save_image_file)
         cv2.imwrite(save_image_file, src_im)
 
@@ -981,7 +982,7 @@ class TableCellExtract(object):
         table_html, db_table_html = TableProcessUtils.cell_to_html(table_cells=results)
         table_html_str = "\n".join(table_html) + "\n"
 
-        save_html_file = f"{self.output_dir}/{self.raw_filename}_table_{table_idx + 1}.html"
+        save_html_file = os.path.join(self.output_dir, f"{self.raw_filename}_table_{table_idx + 1}.html")
         FileUtils.save_to_text(save_html_file, table_html_str)
 
         save_db_html_file = save_html_file.replace(".html", "_db.html")
@@ -1132,11 +1133,11 @@ class TableCellExtract(object):
 
 
 def main():
-    output_dir = f"{Constants.HTML_BASE_DIR}/pdf_debug/{TimeUtils.get_time()}"
+    output_dir = os.path.join(Constants.HTML_BASE_DIR, "pdf_debug", TimeUtils.get_time())
 
-    file_dir = f"{Constants.PDF_CACHE_BASE}/ocr_file/temp_dir"
+    file_dir = os.path.join(Constants.PDF_CACHE_BASE, "ocr_file", "temp_dir")
 
-    file_name = f"{file_dir}/page-27.pdf"
+    file_name = os.path.join(file_dir, "page-27.pdf")
     # file_name = f"{output_dir}/pdf/page-8.pdf"
     # file_name = f"{file_dir}/page-27.png"
     # file_name = (f"{Constants.HTML_BASE_DIR}/pdf_html/pdf_check/main/2023-08-14/578/20230814_162337/page-9.pdf")

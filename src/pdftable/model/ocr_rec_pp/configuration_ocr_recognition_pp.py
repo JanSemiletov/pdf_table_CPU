@@ -5,7 +5,7 @@
 # @Author  ：cycloneboy
 # @Date    ：20xx/8/31 16:58
 
-
+import os
 from typing import Dict
 
 from transformers import PretrainedConfig
@@ -73,6 +73,6 @@ class PPOcrRecognitionConfig(PretrainedConfig):
 
     def get_vocab_file(self):
         if self.vocab_file is None or len(self.vocab_file) == 0:
-            return f"{self.model_path}/{self.lang}_dict.txt"
+            return os.path.join(self.model_path, f"{self.lang}_dict.txt")
         else:
             return self.vocab_file

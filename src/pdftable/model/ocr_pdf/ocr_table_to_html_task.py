@@ -4,6 +4,8 @@
 # @File    ：ocr_table_to_html_task
 # @Author  ：cycloneboy
 # @Date    ：20xx/7/25 18:11
+
+import os
 import time
 import traceback
 from typing import List
@@ -226,7 +228,7 @@ class OcrTableToHtmlTask(object):
 
         table_html, db_table_html = TableProcessUtils.cell_to_html(table_cells=results)
         table_html_str = "\n".join(table_html) + "\n"
-        save_html_file = f"{self.output_dir}/{raw_filename}_table_{table_idx + 1}.html"
+        save_html_file = os.path.join(self.output_dir, f"{raw_filename}_table_{table_idx + 1}.html")
         FileUtils.save_to_text(save_html_file, table_html_str)
 
         save_db_html_file = save_html_file.replace(".html", "_db.html")
@@ -278,7 +280,7 @@ class OcrTableToHtmlTask(object):
 
         toc = time.time()
 
-        save_html_file = f"{self.output_dir}/{raw_filename}_table_{table_idx + 1}.html"
+        save_html_file = os.path.join(self.output_dir, f"{raw_filename}_table_{table_idx + 1}.html")
         FileUtils.save_to_text(save_html_file, "".join(pred_html))
 
         save_db_html_file = save_html_file.replace(".html", "_db.html")

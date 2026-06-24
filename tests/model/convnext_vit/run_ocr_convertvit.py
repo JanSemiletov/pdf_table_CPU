@@ -4,6 +4,8 @@
 # @File    ：run_ocr_convertvit
 # @Author  ：cycloneboy
 # @Date    ：20xx/4/4 15:10
+
+import os
 import traceback
 
 import torch
@@ -29,7 +31,7 @@ class RunTestConvertVit(object):
 
         self.processor = OCRConvNextViTPreprocessor()
 
-        self.labels = FileUtils.read_to_text_list(f"{self.model_name_or_path}/vocab.txt")
+        self.labels = FileUtils.read_to_text_list(os.path.join(self.model_name_or_path, "vocab.txt"))
         self.labelMapping = {index + 2: item for index, item in enumerate(self.labels)}
 
         self.model_dict = {

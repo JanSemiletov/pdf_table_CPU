@@ -60,7 +60,7 @@ class OcrTableTask(object):
         if self.text_recognizer is not None:
             self.text_recognizer.set_output_dir(output_dir)
 
-        FileUtils.check_file_exists(f"{output_dir}/demo.txt")
+        FileUtils.check_file_exists(os.path.join(output_dir, "demo.txt"))
 
     def init_ocr_model(self):
         start = time.time()
@@ -232,9 +232,9 @@ class OcrTableTask(object):
 
         gt_html_dict = FileUtils.load_table_label_txt(label_file)
 
-        ocr_result_file = f"{output_dir}/ocr{run_name}.pickle"
-        structure_result_file = f"{output_dir}/structure{run_name}.pickle"
-        table_html_result_file = f"{output_dir}/table{run_name}.pickle"
+        ocr_result_file = os.path.join(output_dir, f"ocr{run_name}.pickle")
+        structure_result_file = os.path.join(output_dir, f"structure{run_name}.pickle")
+        table_html_result_file = os.path.join(output_dir, f"table{run_name}.pickle")
 
         ocr_result = FileUtils.load_to_model(ocr_result_file)
         structure_result = FileUtils.load_to_model(structure_result_file)
@@ -253,7 +253,7 @@ class OcrTableTask(object):
                 gt_htmls.append(gt_html)
                 continue
 
-            image_file = f"{file_dir}/{img_name}"
+            image_file = os.path.join(file_dir, img_name)
             if not FileUtils.check_file_exists(image_file):
                 continue
 
@@ -298,7 +298,7 @@ class OcrTableTask(object):
             "teds_metric": teds_metric,
         }
 
-        metric_file = f"{output_dir}/metric{run_name}.json"
+        metric_file = os.path.join(output_dir, f"metric{run_name}.json")
         metric_append_file = metric_file.replace('.json', ".txt")
         FileUtils.dump_json(metric_file, metric)
 

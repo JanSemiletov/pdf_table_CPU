@@ -5,6 +5,7 @@
 # @Author  ：cycloneboy
 # @Date    ：20xx/5/29 14:24
 
+import os
 import shutil
 from tempfile import TemporaryDirectory
 from typing import List
@@ -60,7 +61,7 @@ class PDFHandler(object):
         self.password = password
         self.pages = self._get_pages(pages)
         self.output_dir = output_dir if output_dir is not None else \
-            f"{FileUtils.get_output_dir_with_time(add_now_end=False)}/{src_id}/{TimeUtils.now_str_short()}"
+            os.path.join(FileUtils.get_output_dir_with_time(add_now_end=False), src_id, TimeUtils.now_str_short())
         self.src_id = src_id
         self.delete_check_success = delete_check_success
 
@@ -111,7 +112,7 @@ class PDFHandler(object):
 
         """
         tempdir = temp_dir if temp_dir is not None else TemporaryDirectory().name
-        FileUtils.check_file_exists(f"{tempdir}/temp.txt")
+        FileUtils.check_file_exists(os.path.join(tempdir, "temp.txt"))
         logger.info(f"parse pdf tempdir: {tempdir}")
 
         save_file_name = PdfTableExtractUtils.save_pdf_page(filepath=self.filepath, pages=self.pages,
@@ -164,7 +165,7 @@ class PDFHandler(object):
         :return:
         """
         tempdir = temp_dir if temp_dir is not None else TemporaryDirectory().name
-        FileUtils.check_file_exists(f"{tempdir}/temp.txt")
+        FileUtils.check_file_exists(os.path.join(tempdir, "temp.txt"))
         logger.info(f"parse pdf tempdir: {tempdir}")
 
         save_file_name = PdfTableExtractUtils.save_pdf_page(filepath=self.filepath, pages=self.pages,

@@ -4,6 +4,8 @@
 # @File    ：table_extractor
 # @Author  ：cycloneboy
 # @Date    ：20xx/5/31 13:39
+
+import os
 import re
 import warnings
 
@@ -273,13 +275,13 @@ def read_pdf(
         debug=True,
         **kwargs
 ):
-    base_dir = f"{Constants.PDF_CACHE_BASE}/table_file"
+    base_dir = os.path.join(Constants.PDF_CACHE_BASE, "table_file")
     # base_dir = Constants.OUTPUT_DIR
     if output_dir is None:
-        src_temp = f"/{src_id}" if src_id is not None else ""
-        output_dir = f"{base_dir}/inference_results/{TimeUtils.get_time()}{src_temp}/{TimeUtils.now_str_short()}"
+        src_temp = str(src_id) if src_id is not None else ""
+        output_dir = os.path.join(base_dir, "inference_results", TimeUtils.get_time(), src_temp, TimeUtils.now_str_short())
     if pdf_dir is None:
-        pdf_dir = f"{base_dir}/pdf_file"
+        pdf_dir = os.path.join(base_dir, "pdf_file")
 
     if temp_dir is None:
         temp_dir = output_dir
@@ -299,7 +301,7 @@ def read_pdf(
                                      **kwargs
                                      )
     if debug:
-        out_file = f"{output_dir}/{FileUtils.get_file_name(file_name)}"
+        out_file = os.path.join(output_dir, FileUtils.get_file_name(file_name))
         FileUtils.check_file_exists(f'{out_file}.html')
         tables.export(f'{out_file}.html', f='html', compress=False)
         # tables.export(f'{out_file}.json', f='json', compress=False)
@@ -347,10 +349,10 @@ def check_imaged_pdf(
     base_dir = Constants.PDF_CACHE_BASE
     # base_dir = Constants.OUTPUT_DIR
     if output_dir is None:
-        src_temp = f"/{src_id}" if src_id is not None else ""
-        output_dir = f"{base_dir}/inference_results/check_imaged_pdf/{TimeUtils.get_time()}{src_temp}/{TimeUtils.now_str_short()}"
+        src_temp = str(src_id) if src_id is not None else ""
+        output_dir = os.path.join(base_dir, "inference_results", "check_imaged_pdf", TimeUtils.get_time(), src_temp, TimeUtils.now_str_short())
     if pdf_dir is None:
-        pdf_dir = f"{base_dir}/pdf_file"
+        pdf_dir = os.path.join(base_dir, "pdf_file")
 
     if temp_dir is None:
         temp_dir = output_dir

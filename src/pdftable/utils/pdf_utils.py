@@ -168,9 +168,9 @@ class PdfUtils(BaseUtil):
         if text_save_dir.endswith(".txt"):
             text_save_file = text_save_dir
         else:
-            text_save_file = f"{text_save_dir}/{temp_file_name}.txt"
+            text_save_file = os.path.join(text_save_dir, f"{temp_file_name}.txt")
 
-        metric_json_file = f"{metric_save_dir}/{temp_file_name}.json"
+        metric_json_file = os.path.join(metric_save_dir, f"{temp_file_name}.json")
 
         eval_begin_time = TimeUtils.now_str()
 
@@ -254,7 +254,7 @@ class PdfUtils(BaseUtil):
         """
         if file_url.startswith("http"):
             raw_file_name = FileUtils.get_raw_file_name(file_url, )
-            pdf_file = f"{pdf_dir}/{raw_file_name}" if pdf_dir is not None else file_name
+            pdf_file = os.path.join(pdf_dir, raw_file_name) if pdf_dir is not None else file_name
 
             if not FileUtils.check_file_exists(pdf_file):
                 PdfUtils.download_pdf(file_url, pdf_file)
@@ -1264,7 +1264,7 @@ class PdfUtils(BaseUtil):
             logger.warning(f"提取图片型PDF中的图片异常：{file_name} - {e}")
             return 0
 
-        FileUtils.check_file_exists(f"{output_dir}/demo.txt")
+        FileUtils.check_file_exists(os.path.join(output_dir, "demo.txt"))
         xreflist = []
         imglist = []
         save_page_image_file = []
@@ -1417,7 +1417,7 @@ class PdfUtils(BaseUtil):
                 "raw_name": save_name,
                 "save_name": image_file,
                 "src_save_name": raw_image_name,
-                "relative_dir": f"./{new_name}",
+                "relative_dir": os.path.join(".", new_name),
                 "bbox": image.bbox,
                 "height": image.height,
                 "width": image.width,
@@ -1641,14 +1641,14 @@ class PdfUtils(BaseUtil):
                 continue
 
             save_name = image_writer.export_image(image)
-            relative_dir = f"{image_dir}/{save_name}"
+            relative_dir = os.path.join(image_dir, save_name)
 
             image_info = {
                 "key": PdfUtils.get_pdf_image_key(image),
                 "name": image.name,
                 "raw_name": save_name,
                 "save_name": os.path.join(output_dir, relative_dir),
-                "relative_dir": f"./{relative_dir}",
+                "relative_dir": os.path.join(".", relative_dir),
                 "bbox": image.bbox,
                 "height": image.height,
                 "width": image.width,
@@ -1699,7 +1699,7 @@ class PdfUtils(BaseUtil):
             pages = [0, 1]
 
         if new_file is None:
-            new_file = f"{Constants.HTML_BASE_DIR}/check_imaged_pdf/{TimeUtils.get_time()}/{FileUtils.get_raw_file_name(file_name)}"
+            new_file = os.path.join(Constants.HTML_BASE_DIR, "check_imaged_pdf", TimeUtils.get_time(), FileUtils.get_raw_file_name(file_name))
 
         PdfUtils.split_pdf_by_page(pdf_file=file_name, pages=pages, new_file=new_file, pdf_dir=pdf_dir)
         result = PdfUtils.check_is_imaged_pdf(file_name=new_file)

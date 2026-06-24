@@ -4,6 +4,8 @@
 # @File     : ocr_table_preprocess_task.py
 # @Author   : cycloneboy
 # @Date     : 20xx/10/15 - 13:25
+
+import os
 import shutil
 import time
 
@@ -58,12 +60,12 @@ class OcrTablePreprocessTask(object):
         """
         raw_filename = FileUtils.get_file_name(file_name)
         png_filename = f"{raw_filename}.png"
-        cache_name = f"{Constants.PDF_PAGE_DIR}/{src_id}/{png_filename}"
+        cache_name = os.path.join(Constants.PDF_PAGE_DIR, src_id, png_filename)
         metric = None
         angle2 = None
         if is_pdf:
 
-            image_name = f"{self.output_dir}/{png_filename}"
+            image_name = os.path.join(self.output_dir, png_filename)
             if src_id is not None and FileUtils.check_file_exists(cache_name):
                 image_name = cache_name
                 logger.info(f"读取PDF缓存图片：{image_name}")

@@ -34,7 +34,7 @@ class PdfTableExtractUtils(BaseUtil):
             :param password:
 
         """
-        FileUtils.check_file_exists(f"{temp_dir}/temp.txt")
+        FileUtils.check_file_exists(os.path.join(temp_dir, "temp.txt"))
         total_page = 0
         # 从缓存读取
         save_file_name = []

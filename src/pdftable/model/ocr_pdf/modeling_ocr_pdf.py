@@ -332,7 +332,7 @@ class OcrDocument(object):
             logger.info(f"ocr_result_show: {ocr_result_show}")
             logger.info(f"metric: {metric}")
 
-            save_file = f"{self.output_dir}/ocr_{FileUtils.get_file_name(inputs)}_{TimeUtils.now_str_short()}.png"
+            save_file = os.path.join(self.output_dir, f"ocr_{FileUtils.get_file_name(inputs)}_{TimeUtils.now_str_short()}.png")
             FileUtils.check_file_exists(save_file)
 
             image_draw = OcrCommonUtils.draw_boxes(image_full=image_full, det_result=det_result)

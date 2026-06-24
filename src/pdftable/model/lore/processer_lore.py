@@ -194,13 +194,13 @@ class TableLorePostProcessor(object):
         if self.output_dir is not None:
 
             if self.config.eval:
-                base_dir = f"{self.output_dir}/{self.config.task_type}"
+                base_dir = os.path.join(self.output_dir, self.config.task_type)
                 base_name = FileUtils.get_file_name(image_name, add_end=True)
-                image_file = f"{base_dir}/image/{base_name}"
-                boxe_file = f"{base_dir}/center/{base_name}.txt"
-                logit_file = f"{base_dir}/logi/{base_name}.txt"
+                image_file = os.path.join(base_dir, "image", base_name)
+                boxe_file = os.path.join(base_dir, "center", base_name, ".txt")
+                logit_file = os.path.join(base_dir, "logi", base_name, ".txt")
             else:
-                image_file = f"{self.output_dir}/{FileUtils.get_file_name(image_name)}_{TimeUtils.now_str_short()}.jpg"
+                image_file = os.path.join(self.output_dir, f"{FileUtils.get_file_name(image_name)}_{TimeUtils.now_str_short()}.jpg")
                 boxe_file = image_file.replace(".jpg", "_box.txt")
                 logit_file = image_file.replace(".jpg", "_logit.txt")
 

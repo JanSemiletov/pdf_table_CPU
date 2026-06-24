@@ -5,7 +5,7 @@
 # @Author  ：cycloneboy
 # @Date    ：20xx/9/4 15:54
 
-
+import os
 from collections import OrderedDict
 from typing import Mapping, Dict
 
@@ -68,6 +68,6 @@ class SLANetConfig(PretrainedConfig):
     def get_vocab_file(self):
         lang_prefix = "_ch" if self.lang == "ch" else ""
         if self.vocab_file is None or len(self.vocab_file) == 0:
-            return f"{self.model_path}/table_structure_dict{lang_prefix}.txt"
+            return os.path.join(self.model_path, f"table_structure_dict{lang_prefix}.txt")
         else:
             return self.vocab_file

@@ -75,7 +75,7 @@ class PdfTableCli(object):
             output_dir = self.cli_args.output_dir
 
         if output_dir is None:
-            output_dir = f"{Constants.OUTPUT_DIR}/{run_time}"
+            output_dir = os.path.join(Constants.OUTPUT_DIR, run_time)
 
         self.cli_args.output_dir = output_dir
 
@@ -180,7 +180,7 @@ class PdfTableCli(object):
             raw_file_name = FileUtils.get_file_name(run_page_file)
             page = raw_file_name
 
-            predict_file = f"{output_dir}/{raw_file_name}.html"
+            predict_file = os.path.join(output_dir, f"{raw_file_name}.html")
             if FileUtils.check_file_exists(predict_file):
                 pdf_pred_html = FileUtils.read_to_text(predict_file)
             else:
@@ -212,10 +212,10 @@ class PdfTableCli(object):
         FileUtils.save_to_text(html_file, pdf_html)
 
         result_dir_url = CommonUtils.get_result_http_server(output_dir=html_file)
-        show_url = f'{result_dir_url}/{page_show_filename}'
+        show_url = os.path.join(result_dir_url, page_show_filename)
         logger.info(f"解析结果目录链接：{result_dir_url}")
         logger.info(f"解析对比显示链接：{show_url}")
-        logger.info(f"解析最终显示链接：{f'{result_dir_url}/{html_filename}'}")
+        logger.info(f"解析最终显示链接：{os.path.join(result_dir_url, html_filename)}")
 
         logger.info(f"pdf to html result file name：{html_file}")
         result = {

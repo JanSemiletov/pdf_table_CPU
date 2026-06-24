@@ -85,7 +85,7 @@ class OcrTableStructureTask(BaseInferTask):
 
     def set_output_dir(self, output_dir):
         self.output_dir = output_dir
-        FileUtils.check_file_exists(f"{output_dir}/demo.txt")
+        FileUtils.check_file_exists(os.path.join(output_dir, "demo.txt"))
 
     def _construct_model(self, model):
         if model == "CenterNet":
@@ -127,7 +127,7 @@ class OcrTableStructureTask(BaseInferTask):
                 model_dir = FileUtils.get_dir_file_name(self._config.model_path)
             else:
                 model_dir = self._config.model_path
-            save_best_model_path = f"{model_dir}/pytorch_model.bin"
+            save_best_model_path = os.path.join(model_dir, "pytorch_model.bin")
             if not FileUtils.check_file_exists(save_best_model_path):
                 logger.info(f"model path: {save_best_model_path}")
                 torch.save(run_model.state_dict(), save_best_model_path)
@@ -288,7 +288,7 @@ class OcrTableStructureTask(BaseInferTask):
         image_file = FileUtils.get_pdf_to_image_file_name(predict['inputs'])
         file_name = FileUtils.get_file_name(image_file)
 
-        save_html_file = f"{self.output_dir}/{file_name}"
+        save_html_file = os.path.join(self.output_dir, file_name)
         table_cells_v2 = None
         table_cell_metric = None
         if len(bbox_list) > 0 and len(logi_list) > 0 and not self.is_line_cell_model():
@@ -438,7 +438,7 @@ class OcrTableStructureTask(BaseInferTask):
             for index, point in enumerate(new_joint_point):
                 cv2.circle(src_img, (int(point[0]), int(point[1])), 10, color2, thickness)
 
-            save_image_file = f"{self.output_dir}/{file_name}_tsr_joint_point.jpg"
+            save_image_file = os.path.join(self.output_dir, f"{file_name}_tsr_joint_point.jpg")
             FileUtils.check_file_exists(save_image_file)
             cv2.imwrite(save_image_file, src_img)
 
@@ -505,7 +505,7 @@ class OcrTableStructureTask(BaseInferTask):
             color = color_list[cell.row_index % len(color_list)]
             cv2.rectangle(src_img, (cell.x1_round, cell.y1_round), (cell.x2_round, cell.y2_round), color, thickness)
 
-        save_image_file = f"{self.output_dir}/{file_name}{sep_file_name}"
+        save_image_file = os.path.join(self.output_dir, f"{file_name}{sep_file_name}")
         FileUtils.check_file_exists(save_image_file)
         cv2.imwrite(save_image_file, src_img)
 

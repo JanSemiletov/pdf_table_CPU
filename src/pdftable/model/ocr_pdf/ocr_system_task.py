@@ -111,7 +111,7 @@ class OcrSystemTask(object):
         if self.image_pre_process_task is not None:
             self.image_pre_process_task.output_dir = output_dir
 
-        FileUtils.check_file_exists(f"{output_dir}/demo.txt")
+        FileUtils.check_file_exists(os.path.join(output_dir, "demo.txt"))
 
     def init_ocr_model(self, is_pdf=False):
         start = time.time()
@@ -191,7 +191,7 @@ class OcrSystemTask(object):
             logger.info(f"表格结构识别开始：总共待识别：{total} 个。")
             for index, table in enumerate(layout_tables):
                 bbox = table["bbox"]
-                save_name = f"{self.output_dir}/{FileUtils.get_file_name(image)}_{index}.jpg"
+                save_name = os.path.join(self.output_dir, f"{FileUtils.get_file_name(image)}_{index}.jpg")
                 FileUtils.check_file_exists(save_name)
                 image_crop = OcrCommonUtils.crop_image_by_box(image_full, bbox=bbox, save_name=save_name)
                 one_result = self.table_structure_recognizer(save_name)
@@ -582,7 +582,7 @@ class OcrSystemTask(object):
         ocr_system_output.table_structure_result = table_structure_result
 
         # 绘制版面分析结果
-        save_layout_path = f"{self.output_dir}/{raw_filename}_layout.jpg"
+        save_layout_path = os.path.join(self.output_dir, f"{raw_filename}_layout.jpg")
         if self.debug:
             save_layout_json_path = save_layout_path.replace(".jpg", ".json")
             layout_result_list = deepcopy(layout_result)
@@ -667,7 +667,7 @@ class OcrSystemTask(object):
         logger.info(f"OCR识别结束：{metric}")
 
         if self.debug:
-            ocr_result_json_file = f"{self.output_dir}/ocr_{raw_filename}_{run_time}.json"
+            ocr_result_json_file = os.path.join(self.output_dir, f"ocr_{raw_filename}_{run_time}.json")
             FileUtils.dump_json(ocr_result_json_file, metric)
 
         if self.output_dir is not None and save_result and self.debug:
@@ -678,11 +678,11 @@ class OcrSystemTask(object):
             # logger.info(f"ocr_result_show: {ocr_result_show}")
             logger.info(f"metric: {metric}")
 
-            save_file = f"{self.output_dir}/ocr_{raw_filename}_{run_time}.jpg"
+            save_file = os.path.join(self.output_dir, f"ocr_{raw_filename}_{run_time}.jpg")
             FileUtils.check_file_exists(save_file)
 
             # 绘制Text cell
-            save_image_file = f"{self.output_dir}/{raw_filename}_text_cell.jpg"
+            save_image_file = os.path.join(self.output_dir, f"{raw_filename}_text_cell.jpg")
             image_file = FileUtils.get_pdf_to_image_file_name(ocr_system_output.file_name)
             image = cv2.imread(image_file)
             cell_text_image_file = TableProcessUtils.show_text_cell(image=image,

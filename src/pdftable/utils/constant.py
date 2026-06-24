@@ -42,21 +42,21 @@ class Constants(object):
     USER_HOME = get_user_home()
 
     PDFTABLE_USE_MODELSCOPE_HUB = getenv("PDFTABLE_USE_MODELSCOPE_HUB", "0").lower() in ["true", "1"]
-    PDFTABLE_BASE_OUTPUT_DIR = getenv("PDFTABLE_BASE_OUTPUT_DIR", default=f"{USER_HOME}/.cache/pdftable")
+    PDFTABLE_BASE_OUTPUT_DIR = getenv("PDFTABLE_BASE_OUTPUT_DIR", default=os.path.join(USER_HOME, ".cache", "pdftable"))
 
-    OUTPUT_DIR = f"{PDFTABLE_BASE_OUTPUT_DIR}/outputs"
-    DATA_DIR = f"{PDFTABLE_BASE_OUTPUT_DIR}/data"
+    OUTPUT_DIR = os.path.join(PDFTABLE_BASE_OUTPUT_DIR, "outputs")
+    DATA_DIR = os.path.join(PDFTABLE_BASE_OUTPUT_DIR, "data")
 
     SRC_HOME_DIR = getenv("SRC_HOME_DIR", default=SRC_ABS_PATH)
-    SRC_DATA_HOME_DIR = f"{SRC_HOME_DIR}/data"
-    SRC_IMAGE_DIR = f"{SRC_DATA_HOME_DIR}/image"
+    SRC_DATA_HOME_DIR = os.path.join(SRC_HOME_DIR, "data")
+    SRC_IMAGE_DIR = os.path.join(SRC_DATA_HOME_DIR, "image")
 
     LOG_LEVEL = "debug"
-    LOG_FILE = f"{OUTPUT_DIR}/logs/run.log"
+    LOG_FILE = os.path.join(OUTPUT_DIR, "logs", "run.log")
 
-    PDF_CACHE_BASE = f"{OUTPUT_DIR}/pdf"
-    HTML_BASE_DIR = f"{PDF_CACHE_BASE}/inference_results"
-    PDF_PAGE_DIR = f"{HTML_BASE_DIR}/pdf_image/pdf_page_cache"
+    PDF_CACHE_BASE = os.path.join(OUTPUT_DIR, "pdf")
+    HTML_BASE_DIR = os.path.join(PDF_CACHE_BASE, "inference_results")
+    PDF_PAGE_DIR = os.path.join(HTML_BASE_DIR, "pdf_image", "pdf_page_cache")
 
     NUMERALS_ZH_DICT = {'零': 0, '一': 1, '二': 2, '两': 2, '三': 3, '四': 4, '五': 5,
                         '六': 6, '七': 7, '八': 8, '九': 9, '十': 10,
@@ -66,9 +66,9 @@ class Constants(object):
     # ocr
     #
     ####################################################################################
-    SCOPE_MODEL_BASE_DIR = os.path.join(getenv("MODELSCOPE_CACHE", f"{USER_HOME}/.cache/modelscope"), "hub")
-    HF_HUB_BASE_DIR = getenv("HF_HUB_CACHE", f"{USER_HOME}/.cache/huggingface/hub")
-    OCR_FONT_BASE_DIR = f"{SCOPE_MODEL_BASE_DIR}/cycloneboy/pdftable_config/fonts"
+    SCOPE_MODEL_BASE_DIR = os.path.join(getenv("MODELSCOPE_CACHE", os.path.join(USER_HOME, ".cache", "modelscope")), "hub")
+    HF_HUB_BASE_DIR = getenv("HF_HUB_CACHE", os.path.join(USER_HOME, ".cache", "huggingface/hub"))
+    OCR_FONT_BASE_DIR = os.path.join(SCOPE_MODEL_BASE_DIR, "cycloneboy", "pdftable_config", "fonts")
 
     FONT_CONFIG = {
         "ch": "chinese_cht.ttf",
@@ -79,6 +79,6 @@ class Constants(object):
         "cyrillic": "cyrillic.ttf",
         "latin": "latin.ttf",
     }
-    DEFAULT_FONT_DIR = f"{OCR_FONT_BASE_DIR}/chinese_cht.ttf"
+    DEFAULT_FONT_DIR = os.path.join(OCR_FONT_BASE_DIR, "chinese_cht.ttf")
 
-    WANDB_LOG_DIR = f"{OUTPUT_DIR}/wandb"
+    WANDB_LOG_DIR = os.path.join(OUTPUT_DIR, "wandb")

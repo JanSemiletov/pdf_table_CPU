@@ -4,6 +4,8 @@
 # @File     : configuration_mtl_tabnet.py
 # @Author   : cycloneboy
 # @Date     : 20xx/12/15 - 22:33
+
+import os
 from typing import Dict
 
 from transformers import PretrainedConfig
@@ -45,7 +47,7 @@ class MtlTabnetConfig(PretrainedConfig):
             model_name: str = "MtlTabNet",
             backbone: str = "TableResNetExtra",
             task_type: str = "PubTabNet",
-            config_file: str = f"{TABLE_ABS_PATH}/mtl_tabnet/mtl_tabnet_config.py",
+            config_file: str = os.path.join(TABLE_ABS_PATH, "mtl_tabnet", "mtl_tabnet_config.py"),
             model_path: str = "",
             debug: bool = True,
             **kwargs
@@ -69,9 +71,9 @@ class MtlTabnetConfig(PretrainedConfig):
 
     def get_config_file(self, default_config):
         config_mapping = {
-            "Lgpma": f"{TABLE_ABS_PATH}/lgpma/lgpma_base.py",
-            "MtlTabNet": f"{TABLE_ABS_PATH}/mtl_tabnet/mtl_tabnet_config.py",
-            "TableMaster": f"{TABLE_ABS_PATH}/mtl_tabnet/table_master_config.py",
+            "Lgpma": os.path.join(TABLE_ABS_PATH, "lgpma", "lgpma_base.py"),
+            "MtlTabNet": os.path.join(TABLE_ABS_PATH, "mtl_tabnet", "mtl_tabnet_config.py"),
+            "TableMaster": os.path.join(TABLE_ABS_PATH, "mtl_tabnet", "table_master_config.py"),
         }
 
         config_file = config_mapping.get(self.model_name, default_config)
