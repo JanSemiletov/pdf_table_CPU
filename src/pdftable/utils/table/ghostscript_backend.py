@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import sys
+import os
 import ctypes
 import traceback
+import subprocess
+import glob
 from ctypes.util import find_library
 
 from ...utils import CmdUtils
@@ -15,15 +18,60 @@ __all__ = [
 
 def installed_posix():
     library = find_library("gs")
-    return library is not None
+    if library is not None:
+        return True
+    
+    try:
+        result = subprocess.run(["gs", "--version"],
+                                capture_output=True,
+                                timeout=5)
+        return result.returncode == 0
+    except (FileNotFoundError, subprocess.TimeoutExpired):
+        return False
 
 
 def installed_windows():
     library = find_library(
         "".join(("gsdll", str(ctypes.sizeof(ctypes.c_voidp) * 8), ".dll"))
     )
-    return library is not None
+    if library is not None:
+        return True
+    
+    gs_exe = get_gs_command_windows()
+    try:
+        result = subprocess.run([gs_exe, "--version"],
+                                capture_output=True,
+                                timeout=5)
+        return result.returncode == 0
+    except (FileNotFoundError, subprocess.TimeoutExpired):
+        pass
 
+    common_paths = [
+        r"C\Program Files\gs",
+        r"C\Program Files (x86)\gs"
+    ]
+    dll_name = "".join(("gsdll", str(ctypes.sizeof(ctypes.c_void_p) * 8), ".dll"))
+
+    for base_path in common_paths:
+        if os.path.exists(base_path):
+            dll_pattern = os.path.join(base_path, "**", dll_name)
+            matches = glob.glob(dll_pattern, recursive=True)
+            if matches:
+                return True
+            
+    return False
+
+def get_gs_command_windows():
+    if ctypes.sizeof(ctypes.c_void_p) == 0:
+        return "gswin64c.exe"
+    else:
+        return "gswin32c.exe"
+
+def get_gs_command():
+    if sys.platform == "win32":
+        return get_gs_command_windows()
+    else:
+        return "gs"
 
 class GhostscriptBackend(object):
     def installed(self):
@@ -43,8 +91,9 @@ class GhostscriptBackend(object):
 
         import ghostscript
 
+        gs_cmd = get_gs_command()
         gs_command = [
-            "gs",
+            gs_cmd,
             "-q",
             "-sDEVICE=png16m",
             "-o",
@@ -57,11 +106,12 @@ class GhostscriptBackend(object):
 
     def convert(self, pdf_path, png_path, resolution=300):
         """
-
+        Convert PDF to PNG using Ghostscript
+        
         :param pdf_path:
         :param png_path:
         :param resolution:
-        :return:
+        :return: (success: bool, metric: dict)
         """
         if not self.installed():
             raise OSError(
@@ -72,8 +122,9 @@ class GhostscriptBackend(object):
         extract_success = False
         metric = {}
         try:
+            gs_cmd = get_gs_command()
             gs_command = [
-                "gs",
+                gs_cmd,
                 "-q",
                 "-sDEVICE=png16m",
                 "-o",
@@ -81,17 +132,30 @@ class GhostscriptBackend(object):
                 f"-r{resolution}",
                 pdf_path,
             ]
-            gs_cmd = ' '.join(gs_command)
+            logger.info(f"Starting ghostscript:{" ".join(gs_command)}")
 
-            cmd = gs_cmd
-            logger.info(f"开始执行ghostscript：{cmd}")
-            CmdUtils.run_cmd(cmd=cmd)
-            logger.info(f"结束执行ghostscript：{cmd}")
+            result = subprocess.run(
+                gs_command,
+                capture_output=True,
+                text=True,
+                timeout=300
+            )
 
-            extract_success = True
-            metric["cmd"] = cmd
+            if result.returncode == 0:
+                extract_success = True
+                logger.info("Ghostscript completed successfully")
+            else:
+                logger.error(f"Ghostscript failed with return code {result.returncode}")
+                logger.error(f"stderr: {result.stderr}")
 
+            metric["cmd"] = " ".join(gs_command)
+            metric["returncode"] = result.returncode
+
+        except subprocess.TimeoutExpired:
+            logger.error("Ghostscript command timed out after 5 minutes")
+        except FileNotFoundError:
+            logger.error(f"Ghostscript comman '{gs_command}' not found. Make sure Ghostscript is installed and in PATH")
         except Exception as e:
-            traceback.print_exc()
+            logger.error(f"Ghostscript conversion failed: {e}")
 
         return extract_success, metric
