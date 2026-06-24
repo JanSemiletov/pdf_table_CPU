@@ -132,7 +132,7 @@ class GhostscriptBackend(object):
                 f"-r{resolution}",
                 pdf_path,
             ]
-            logger.info(f"Starting ghostscript:{" ".join(gs_command)}")
+            logger.info(f"Starting ghostscript:{' '.join(gs_command)}")
 
             result = subprocess.run(
                 gs_command,
