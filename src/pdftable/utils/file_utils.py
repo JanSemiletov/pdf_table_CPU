@@ -175,7 +175,7 @@ class FileUtils(BaseUtil):
     @staticmethod
     def get_file_name_list(path, type="*.txt"):
         """获取指定路径下的指定类型的所有文件"""
-        files = glob.glob(os.path.join(path, type))
+        files = glob.glob(FileUtils.join_path(path, type))
         return files
 
     @staticmethod
@@ -228,7 +228,7 @@ class FileUtils(BaseUtil):
         for file_name in os.listdir(file_dir):
             if file_name.endswith(endswith):
                 if add_dir:
-                    file_list.append(os.path.join(file_dir, file_name))
+                    file_list.append(FileUtils.join_path(file_dir, file_name))
                 else:
                     file_list.append(file_name)
 
@@ -247,7 +247,7 @@ class FileUtils(BaseUtil):
             return file_list
 
         for file_name in os.listdir(file_dir):
-            file_path = os.path.join(file_dir, file_name)
+            file_path = FileUtils.join_path(file_dir, file_name)
             file_path = os.path.abspath(file_path)
             if os.path.isdir(file_path):
                 if add_dir:
@@ -266,7 +266,7 @@ class FileUtils(BaseUtil):
         """
 
         for i in os.listdir(path):
-            path_children = os.path.join(path, i)
+            path_children = FileUtils.join_path(path, i)
             if os.path.isfile(path_children):
                 os.remove(path_children)
             else:  # 递归, 删除目录下的所有文件
@@ -301,7 +301,7 @@ class FileUtils(BaseUtil):
         if not os.path.exists(file_dir):
             return dir_list
         for name in os.listdir(file_dir):
-            run_dir = os.path.join(file_dir, name)
+            run_dir = FileUtils.join_path(file_dir, name)
             flag = os.path.isdir(run_dir) if is_dir else os.path.isfile(run_dir)
             if flag:
                 if start_with is not None and not str(name).startswith(start_with):
@@ -309,7 +309,7 @@ class FileUtils(BaseUtil):
                 if end_with is not None and not str(name).endswith(end_with):
                     continue
                 if add_parent:
-                    run_dir = os.path.join(file_dir, name)
+                    run_dir = FileUtils.join_path(file_dir, name)
                 else:
                     run_dir = name
                 dir_list.append(run_dir)
@@ -377,7 +377,7 @@ class FileUtils(BaseUtil):
                 return [filepath], [basename]
             elif os.path.isdir(filepath) and basename not in ignore_dir_names:
                 for file in os.listdir(filepath):
-                    full_filepath = os.path.join(filepath, file)
+                    full_filepath = FileUtils.join_path(filepath, file)
                     full_basename = os.path.basename(full_filepath)
                     if os.path.isfile(full_filepath) \
                             and full_basename not in ignore_file_names \
@@ -422,7 +422,7 @@ class FileUtils(BaseUtil):
                 if start_with is not None and not str(run_dir).startswith(start_with):
                     continue
                 if add_parent:
-                    run_dir = os.path.join(file_dir, run_dir)
+                    run_dir = FileUtils.join_path(file_dir, run_dir)
                 dir_list.append(run_dir)
             # dir_list.extend(dirs)
             # files_list.extend(files)
@@ -573,11 +573,11 @@ class FileUtils(BaseUtil):
         :return:
         """
         file_name = os.path.basename(src)
-        dst_file_name = os.path.join(dst, file_name)
+        dst_file_name = FileUtils.join_path(dst, file_name)
 
         if src is None or len(src) == 0 or not os.path.exists(src):
             return dst_file_name
-        FileUtils.check_file_exists(os.path.join(dst, "tmp.txt"))
+        FileUtils.check_file_exists(FileUtils.join_path(dst, "tmp.txt"))
 
         if cp_metadata:
             # Copy files, but preserve metadata (cp -p src dst)
@@ -587,7 +587,7 @@ class FileUtils(BaseUtil):
             shutil.copy(src, dst)
 
         file_name = os.path.basename(src)
-        dst_file_name = os.path.join(dst, file_name)
+        dst_file_name = FileUtils.join_path(dst, file_name)
         return dst_file_name
 
     @staticmethod
@@ -604,7 +604,7 @@ class FileUtils(BaseUtil):
         shutil.copyfile(src, dst)
 
         file_name = os.path.basename(src)
-        dst_file_name = os.path.join(dst, file_name)
+        dst_file_name = FileUtils.join_path(dst, file_name)
         return dst_file_name
 
     @staticmethod
@@ -614,7 +614,7 @@ class FileUtils(BaseUtil):
         :param src:
         :return:
         """
-        FileUtils.check_file_exists(os.path.join(dst, "tmp.txt"))
+        FileUtils.check_file_exists(FileUtils.join_path(dst, "tmp.txt"))
         # Copy directory tree (cp -R src dst)
         shutil.copytree(src, dst, symlinks)
 
@@ -625,7 +625,7 @@ class FileUtils(BaseUtil):
         :param src:
         :return:
         """
-        FileUtils.check_file_exists(os.path.join(dst, "tmp.txt"))
+        FileUtils.check_file_exists(FileUtils.join_path(dst, "tmp.txt"))
         shutil.move(src, dst)
 
     @staticmethod
@@ -635,7 +635,7 @@ class FileUtils(BaseUtil):
         :param save_dir:
         :return:
         """
-        file_path = os.path.join(save_dir, TimeUtils.get_time())
+        file_path = FileUtils.join_path(save_dir, TimeUtils.get_time())
         return file_path
 
     @staticmethod
@@ -671,7 +671,7 @@ class FileUtils(BaseUtil):
         :param file_path:
         :return:
         """
-        dir_name = FileUtils.get_parent_dir_name(os.path.join(file_path, "test.txt"))
+        dir_name = FileUtils.get_parent_dir_name(FileUtils.join_path(file_path, "test.txt"))
         check_num = str(dir_name).split("-")[1]
         return int(check_num)
 
@@ -886,7 +886,15 @@ class FileUtils(BaseUtil):
 
     @staticmethod
     def get_output_dir_with_time(add_now_end=True):
-        output_dir = os.path.join(Constants.HTML_BASE_DIR, "pdf_debug", TimeUtils.get_time())
+        output_dir = FileUtils.join_path(Constants.HTML_BASE_DIR, "pdf_debug", TimeUtils.get_time())
         if add_now_end:
-            output_dir = os.path.join(output_dir, TimeUtils.now_str_short())
+            output_dir = FileUtils.join_path(output_dir, TimeUtils.now_str_short())
         return output_dir
+    
+    def join_path(*paths):
+        filtered_paths = []
+        for path in paths:
+            if not path is None:
+                filtered_paths.append(str(path))
+
+        return FileUtils.join_path(*filtered_paths)

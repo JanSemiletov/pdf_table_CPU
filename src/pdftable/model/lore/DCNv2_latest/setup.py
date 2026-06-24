@@ -7,16 +7,18 @@ import torch
 from setuptools import find_packages, setup
 from torch.utils.cpp_extension import CUDA_HOME, CppExtension, CUDAExtension
 
+from pdftable.utils.file_utils import FileUtils
+
 requirements = ["torch", "torchvision"]
 
 
 def get_extensions():
     this_dir = os.path.dirname(os.path.abspath(__file__))
-    extensions_dir = os.path.join(this_dir, "src")
+    extensions_dir = FileUtils.join_path(this_dir, "src")
 
-    main_file = glob.glob(os.path.join(extensions_dir, "*.cpp"))
-    source_cpu = glob.glob(os.path.join(extensions_dir, "cpu", "*.cpp"))
-    source_cuda = glob.glob(os.path.join(extensions_dir, "cuda", "*.cu"))
+    main_file = glob.glob(FileUtils.join_path(extensions_dir, "*.cpp"))
+    source_cpu = glob.glob(FileUtils.join_path(extensions_dir, "cpu", "*.cpp"))
+    source_cuda = glob.glob(FileUtils.join_path(extensions_dir, "cuda", "*.cu"))
     os.environ["CC"] = "g++"
     sources = main_file + source_cpu
     extension = CppExtension
@@ -38,7 +40,7 @@ def get_extensions():
         # raise NotImplementedError('Cuda is not available')
         pass
 
-    sources = [os.path.join(extensions_dir, s) for s in sources]
+    sources = [FileUtils.join_path(extensions_dir, s) for s in sources]
     include_dirs = [extensions_dir]
     ext_modules = [
         extension(

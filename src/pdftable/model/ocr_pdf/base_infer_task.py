@@ -18,7 +18,7 @@ from transformers.onnx import OnnxConfig
 from pdftable.model.ocr_pdf.ocr_table_model_config import TABLE_MODEL_DICT
 from pdftable.utils import (
     Constants,
-    TimeUtils, CommonUtils,
+    TimeUtils, CommonUtils, FileUtils,
 )
 from pdftable.utils.deploy_utils import DeployUtils
 
@@ -82,15 +82,15 @@ class BaseInferTask(metaclass=ABCMeta):
         self.server_model = kwargs.get("server_model", False)
         self.use_modelscope_hub = kwargs.get("use_modelscope_hub", Constants.PDFTABLE_USE_MODELSCOPE_HUB)
 
-        self._task_path_default = os.path.join(self._home_path, "taskflow", self.task, self.model)
+        self._task_path_default = FileUtils.join_path(self._home_path, "taskflow", self.task, self.model)
 
         if "task_path" in self.kwargs:
             self._task_path = self.kwargs["task_path"]
             self._custom_model = True
         elif self._priority_path:
-            self._task_path = os.path.join(self._home_path, "taskflow", self._priority_path)
+            self._task_path = FileUtils.join_path(self._home_path, "taskflow", self._priority_path)
         else:
-            self._task_path = os.path.join(self._home_path, "taskflow", self.task, self.model)
+            self._task_path = FileUtils.join_path(self._home_path, "taskflow", self.task, self.model)
 
         self.model_dict = TABLE_MODEL_DICT
 
@@ -163,9 +163,9 @@ class BaseInferTask(metaclass=ABCMeta):
             _base_path = (
                 self._task_path
                 if not self.from_hf_hub
-                else os.path.join(self._home_path, "taskflow", self.task, self.model)
+                else FileUtils.join_path(self._home_path, "taskflow", self.task, self.model)
             )
-            self.inference_model_path = os.path.join(_base_path, "pytorch_model.bin")
+            self.inference_model_path = FileUtils.join_path(_base_path, "pytorch_model.bin")
 
         if self._predictor_type in ["pytorch", "other"]:
             self._construct_model(self.model)
@@ -183,7 +183,7 @@ class BaseInferTask(metaclass=ABCMeta):
 
     def get_model_name_or_path(self):
         model_name_or_path = self._task_path
-        pretrain_weight_pytorch = os.path.join(model_name_or_path, "pytorch_model.bin")
+        pretrain_weight_pytorch = FileUtils.join_path(model_name_or_path, "pytorch_model.bin")
 
         if os.path.exists(pretrain_weight_pytorch):
             return model_name_or_path
@@ -192,11 +192,11 @@ class BaseInferTask(metaclass=ABCMeta):
             if str(self._priority_path).find("/") > -1:
                 model_name_or_path = self._priority_path
 
-            catch_path = os.path.join(Constants.SCOPE_MODEL_BASE_DIR, self._priority_path)
+            catch_path = FileUtils.join_path(Constants.SCOPE_MODEL_BASE_DIR, self._priority_path)
             if os.path.exists(catch_path):
                 model_name_or_path = catch_path
 
-            # catch_path = os.path.join(MODEL_HOME, self._priority_path)
+            # catch_path = FileUtils.join_path(MODEL_HOME, self._priority_path)
             # if os.path.exists(catch_path):
             #     model_name_or_path = catch_path
 
@@ -214,7 +214,7 @@ class BaseInferTask(metaclass=ABCMeta):
             elif self.model_provider == "Other":
                 model_name_or_path = self.get_model_path_from_other()
 
-        # model_name_or_path = os.path.join(Constants.SCOPE_MODEL_BASE_DIR, model_config)
+        # model_name_or_path = FileUtils.join_path(Constants.SCOPE_MODEL_BASE_DIR, model_config)
         if model_name_or_path in [
             'cycloneboy/line_cell',
             'cycloneboy/line_cell_pdf'

@@ -26,6 +26,8 @@ import math
 import numpy as np
 from shapely.geometry import Polygon, MultiPoint
 
+from pdftable.utils.file_utils import FileUtils
+
 """
 Useful function in matching.
 """
@@ -89,7 +91,7 @@ def pickle_load(path, prefix='end2end'):
         data = pickle.load(open(path, 'rb'))
     elif os.path.isdir(path):
         data = dict()
-        search_path = os.path.join(path, '{}_*.pkl'.format(prefix))
+        search_path = FileUtils.join_path(path, '{}_*.pkl'.format(prefix))
         pkls = glob.glob(search_path)
         for pkl in pkls:
             this_data = pickle.load(open(pkl, 'rb'))

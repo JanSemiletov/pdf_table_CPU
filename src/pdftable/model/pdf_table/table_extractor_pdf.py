@@ -117,10 +117,10 @@ class TableExtractorPdf(TableExtractorBase):
     def get_result_http_server(self):
         result_http_server = "http://localhost:9100"
 
-        prefix = os.path.join(Constants.PDF_CACHE_BASE, "table_file", "inference_results")
+        prefix = FileUtils.join_path(Constants.PDF_CACHE_BASE, "table_file", "inference_results")
         if self.output_dir is not None and str(self.output_dir).startswith(prefix):
             end = os.path.dirname(self.output_dir)[len(prefix) + 1:]
-            result_http_server = os.path.join(result_http_server, "pdf_html", end)
+            result_http_server = FileUtils.join_path(result_http_server, "pdf_html", end)
 
         return result_http_server
 
@@ -179,7 +179,7 @@ class TableExtractorPdf(TableExtractorBase):
             line_mask = vertical_mask + horizontal_mask
 
             if self.debug:
-                save_image_file = os.path.join(self.output_dir, f"{self.raw_filename}_line_mask.png")
+                save_image_file = FileUtils.join_path(self.output_dir, f"{self.raw_filename}_line_mask.png")
                 FileUtils.check_file_exists(save_image_file)
                 cv2.imwrite(save_image_file, line_mask)
                 logger.info(f"保存line_mask：{save_image_file}")
@@ -245,7 +245,7 @@ class TableExtractorPdf(TableExtractorBase):
             for index, point in enumerate(val):
                 cv2.circle(src_im, point, 20, color2, thickness)
 
-        save_image_file = os.path.join(self.output_dir, f"{self.raw_filename}_table_joint_point.png")
+        save_image_file = FileUtils.join_path(self.output_dir, f"{self.raw_filename}_table_joint_point.png")
         FileUtils.check_file_exists(save_image_file)
         cv2.imwrite(save_image_file, src_im)
 
@@ -282,10 +282,10 @@ class TableExtractorPdf(TableExtractorBase):
             "image_name": self.imagename,
             "image_scalers": self.image_scalers,
             "pdf_scalers": self.pdf_scalers,
-            "result_dir_url": os.path.join(self.result_http_server, run_time),
-            "show_url": os.path.join(self.result_http_server, run_time, f"{self.raw_filename}_show.html"),
-            "line_mask_image": os.path.join(self.output_dir, f"{self.raw_filename}_line_mask.png"),
-            "table_joint_point_image": os.path.join(self.output_dir, f"{self.raw_filename}_table_joint_point.png"),
+            "result_dir_url": FileUtils.join_path(self.result_http_server, run_time),
+            "show_url": FileUtils.join_path(self.result_http_server, run_time, f"{self.raw_filename}_show.html"),
+            "line_mask_image": FileUtils.join_path(self.output_dir, f"{self.raw_filename}_line_mask.png"),
+            "table_joint_point_image": FileUtils.join_path(self.output_dir, f"{self.raw_filename}_table_joint_point.png"),
             "table_metric": []
         }
 
@@ -407,17 +407,17 @@ class TableExtractorPdf(TableExtractorBase):
             logger.info(f"没有提取到表格：{self.raw_filename}")
             return
 
-        out_file = os.path.join(self.output_dir, FileUtils.get_file_name(self.filepath))
+        out_file = FileUtils.join_path(self.output_dir, FileUtils.get_file_name(self.filepath))
         table_list.export(f'{out_file}.html', f='html', compress=False)
         table_list.export(f'{out_file}.json', f='json', compress=False)
         table_list.export(f'{out_file}.xlsx', f='excel', compress=False)
 
         table_metric = metric["table_metric"]
 
-        html_file = os.path.join(self.output_dir, f"{self.raw_filename}_show.html")
+        html_file = FileUtils.join_path(self.output_dir, f"{self.raw_filename}_show.html")
         logger.info(f"html show file : {html_file}")
 
-        metric_json_file = os.path.join(self.output_dir, f"{self.raw_filename}_metric.json")
+        metric_json_file = FileUtils.join_path(self.output_dir, f"{self.raw_filename}_metric.json")
         FileUtils.dump_json(metric_json_file, metric)
         logger.info(f"metric json file : {metric_json_file}")
 
@@ -698,7 +698,7 @@ class TableExtractorPdf(TableExtractorBase):
 
             cv2.rectangle(src_im, start_point, end_point, color, thickness)
 
-        save_image_file = os.path.join(self.output_dir, f"{self.raw_filename}_table_cell_{table_idx + 1}.png")
+        save_image_file = FileUtils.join_path(self.output_dir, f"{self.raw_filename}_table_cell_{table_idx + 1}.png")
         FileUtils.check_file_exists(save_image_file)
         cv2.imwrite(save_image_file, src_im)
 
@@ -1122,7 +1122,7 @@ class TableExtractorPdf(TableExtractorBase):
         table_html, db_table_html = self.cell_to_html(table_cells=results)
         table_html_str = "\n".join(table_html) + "\n"
 
-        save_html_file = os.path.join(self.output_dir, f"{self.raw_filename}_table_{table_idx + 1}.html")
+        save_html_file = FileUtils.join_path(self.output_dir, f"{self.raw_filename}_table_{table_idx + 1}.html")
         FileUtils.save_to_text(save_html_file, table_html_str)
 
         save_db_html_file = save_html_file.replace(".html", "_db.html")
@@ -1320,7 +1320,7 @@ class TableExtractorPdf(TableExtractorBase):
         :param image_scalers:
         :return:
         """
-        save_image_file = os.path.join(self.output_dir, f"{self.raw_filename}_text_cell_{table_idx + 1}.png")
+        save_image_file = FileUtils.join_path(self.output_dir, f"{self.raw_filename}_text_cell_{table_idx + 1}.png")
         try:
             src_im = copy.deepcopy(self.image)
 
@@ -1707,9 +1707,9 @@ class TableExtractorPdf(TableExtractorBase):
 def demo_run_extract_table():
     output_dir = FileUtils.get_output_dir_with_time()
 
-    file_dir = os.path.join(Constants.PDF_CACHE_BASE, "ocr_file", "temp_dir")
+    file_dir = FileUtils.join_path(Constants.PDF_CACHE_BASE, "ocr_file", "temp_dir")
 
-    file_name = os.path.join(file_dir, "page-27.pdf")
+    file_name = FileUtils.join_path(file_dir, "page-27.pdf")
 
     parser = TableExtractorPdf(output_dir=output_dir)
     tables = parser.extract_tables(file_name)

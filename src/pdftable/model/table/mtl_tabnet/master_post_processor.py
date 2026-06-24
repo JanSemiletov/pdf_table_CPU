@@ -385,7 +385,7 @@ class MasterPostProcessor(object):
             raw_name = FileUtils.get_file_name(file_name)
             pred_bboxs = result['bbox']
 
-            save_name = os.path.join(self.output_dir, f"{raw_name}.jpg")
+            save_name = FileUtils.join_path(self.output_dir, f"{raw_name}.jpg")
             visual_pred_bboxes(pred_bboxs, image_name=file_name, save_name=save_name)
 
             html_file_name = save_name.replace(".jpg", ".html")

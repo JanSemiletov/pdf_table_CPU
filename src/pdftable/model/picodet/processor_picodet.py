@@ -121,7 +121,7 @@ class OCRPicodetPostProcessor(object):
         """
         super().__init__()
         self.config = config
-        # self.labels = self.load_layout_dict(os.path.join(config.model_path, config.label_file))
+        # self.labels = self.load_layout_dict(FileUtils.join_path(config.model_path, config.label_file))
         self.strides = config.strides
         self.score_threshold = config.score_threshold
         self.nms_threshold = config.nms_threshold

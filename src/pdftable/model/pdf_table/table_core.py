@@ -11,6 +11,7 @@ from typing import List
 
 import numpy as np
 
+from pdftable.utils.file_utils import FileUtils
 
 # minimum number of vertical textline intersections for a textedge
 # to be considered valid
@@ -862,7 +863,7 @@ class TableList(object):
         ext = kwargs.get("ext")
         for table in self._tables:
             filename = f"{root}-page-{table.page}-table-{table.order}{ext}"
-            filepath = os.path.join(dirname, filename)
+            filepath = FileUtils.join_path(dirname, filename)
             to_format = self._format_func(table, f)
             to_format(filepath)
 
@@ -871,11 +872,11 @@ class TableList(object):
         dirname = kwargs.get("dirname")
         root = kwargs.get("root")
         ext = kwargs.get("ext")
-        zipname = os.path.join(os.path.dirname(path), root) + ".zip"
+        zipname = FileUtils.join_path(os.path.dirname(path), root) + ".zip"
         with zipfile.ZipFile(zipname, "w", allowZip64=True) as z:
             for table in self._tables:
                 filename = f"{root}-page-{table.page}-table-{table.order}{ext}"
-                filepath = os.path.join(dirname, filename)
+                filepath = FileUtils.join_path(dirname, filename)
                 z.write(filepath, os.path.basename(filepath))
 
     def export(self, path, f="csv", compress=False):
@@ -905,20 +906,20 @@ class TableList(object):
             if compress:
                 self._compress_dir(**kwargs)
         elif f == "excel":
-            filepath = os.path.join(dirname, basename)
+            filepath = FileUtils.join_path(dirname, basename)
             with pd.ExcelWriter(filepath) as writer:
                 for table in self._tables:
                     sheet_name = f"page-{table.page}-table-{table.order}"
                     table.df.to_excel(writer, sheet_name=sheet_name)
             if compress:
-                zipname = os.path.join(os.path.dirname(path), root) + ".zip"
+                zipname = FileUtils.join_path(os.path.dirname(path), root) + ".zip"
                 with zipfile.ZipFile(zipname, "w", allowZip64=True) as z:
                     z.write(filepath, os.path.basename(filepath))
         elif f == "sqlite":
-            filepath = os.path.join(dirname, basename)
+            filepath = FileUtils.join_path(dirname, basename)
             for table in self._tables:
                 table.to_sqlite(filepath)
             if compress:
-                zipname = os.path.join(os.path.dirname(path), root) + ".zip"
+                zipname = FileUtils.join_path(os.path.dirname(path), root) + ".zip"
                 with zipfile.ZipFile(zipname, "w", allowZip64=True) as z:
                     z.write(filepath, os.path.basename(filepath))

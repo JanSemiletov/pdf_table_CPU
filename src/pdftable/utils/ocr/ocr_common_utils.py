@@ -152,7 +152,7 @@ class OcrCommonUtils(BaseUtil):
             imgs_lists.append(img_file)
         elif os.path.isdir(img_file):
             for single_file in os.listdir(img_file):
-                file_path = os.path.join(img_file, single_file)
+                file_path = FileUtils.join_path(img_file, single_file)
                 if os.path.isfile(file_path) and OcrCommonUtils.check_image_file(file_path):
                     imgs_lists.append(file_path)
         if len(imgs_lists) == 0:

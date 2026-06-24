@@ -92,7 +92,7 @@ class TableCellExtractFromPdf(object):
         return image_name, do_convert
 
     def save_image_with_name(self, image, name="line_mask.png"):
-        save_image_file = os.path.join(self.output_dir, f"{self.raw_filename}_{name}")
+        save_image_file = FileUtils.join_path(self.output_dir, f"{self.raw_filename}_{name}")
         FileUtils.check_file_exists(save_image_file)
         cv2.imwrite(save_image_file, image)
         logger.info(f"save {name} image：{save_image_file}")
@@ -229,7 +229,7 @@ class TableCellExtractFromPdf(object):
             color = self.color_list[cell.row_index % len(self.color_list)]
             cv2.rectangle(src_im, cell.image_bbox[:2], cell.image_bbox[2:], color, thickness)
 
-        save_image_file = os.path.join(self.output_dir, f"{self.raw_filename}{sep_file_name}{table_idx + 1}.jpg")
+        save_image_file = FileUtils.join_path(self.output_dir, f"{self.raw_filename}{sep_file_name}{table_idx + 1}.jpg")
         FileUtils.check_file_exists(save_image_file)
         cv2.imwrite(save_image_file, src_im)
 
@@ -271,7 +271,7 @@ class TableCellExtractFromPdf(object):
             self.filtered_images = filtered_images
             self.pdf_images, self.pdf_image_mapping = PdfUtils.save_pdf_image(images=images,
                                                                               output_dir=self.output_dir,
-                                                                              image_dir=os.path.join("image", self.page))
+                                                                              image_dir=FileUtils.join_path("image", self.page))
         # if self.debug:
         if self.image is None:
             self.image = cv2.imread(self.image_name)
@@ -287,7 +287,7 @@ class TableCellExtractFromPdf(object):
 
         # 添加表格cell识别的边线添加到threshold
         if ocr_system_output is not None and ocr_system_output.table_structure_result is not None:
-            save_html_file = os.path.join(self.output_dir, ocr_system_output.raw_filename)
+            save_html_file = FileUtils.join_path(self.output_dir, ocr_system_output.raw_filename)
             self.table_cells = self.get_table_cell_from_ocr_system_output(ocr_system_output,
                                                                           save_html_file=save_html_file)
 
@@ -299,7 +299,7 @@ class TableCellExtractFromPdf(object):
         self.table_bbox = table_bbox
 
         if self.debug:
-            save_image_file = os.path.join(self.output_dir, f"{self.raw_filename}_table_joint_point.jpg")
+            save_image_file = FileUtils.join_path(self.output_dir, f"{self.raw_filename}_table_joint_point.jpg")
             TableProcessUtils.save_table_join_point(image=self.image,
                                                     table_bbox_unscaled=self.table_bbox_unscaled,
                                                     save_image_file=save_image_file,
@@ -321,10 +321,10 @@ class TableCellExtractFromPdf(object):
             "image_name": self.image_name,
             "image_scalers": self.image_scalers,
             "pdf_scalers": self.pdf_scalers,
-            "result_dir_url": os.path.join(self.result_http_server, run_time),
-            "show_url": os.path.join(self.result_http_server, run_time, f"{self.raw_filename}_show.html"),
-            "line_mask_image": os.path.join(self.output_dir, f"{self.raw_filename}_line_mask.png"),
-            "table_joint_point_image": os.path.join(self.output_dir, f"{self.raw_filename}_table_joint_point.jpg"),
+            "result_dir_url": FileUtils.join_path(self.result_http_server, run_time),
+            "show_url": FileUtils.join_path(self.result_http_server, run_time, f"{self.raw_filename}_show.html"),
+            "line_mask_image": FileUtils.join_path(self.output_dir, f"{self.raw_filename}_line_mask.png"),
+            "table_joint_point_image": FileUtils.join_path(self.output_dir, f"{self.raw_filename}_table_joint_point.jpg"),
             "table_metric": []
         }
 
@@ -356,7 +356,7 @@ class TableCellExtractFromPdf(object):
                     logger.info(f"过滤只有一行和一列的表格：{table_idx} - {text_bbox}")
                     continue
 
-                save_html_file = os.path.join(self.output_dir, f"{self.raw_filename}_table_{table_idx + 1}.html")
+                save_html_file = FileUtils.join_path(self.output_dir, f"{self.raw_filename}_table_{table_idx + 1}.html")
                 table_cells, table_html, match_metric, db_table_html = pdf_table_algo.match_table_cell_and_text_cell(
                     table_idx=table_idx,
                     table_cells=all_cell_results,
@@ -432,7 +432,7 @@ class TableCellExtractFromPdf(object):
                                                               cell_result=tables)
 
             image_draw = Image.fromarray(image_draw)
-            save_file = os.path.join(self.output_dir, f"ocr_{self.raw_filename}_{run_time}.jpg")
+            save_file = FileUtils.join_path(self.output_dir, f"ocr_{self.raw_filename}_{run_time}.jpg")
             image_draw.save(save_file)
             logger.info(f"save_file: {save_file}")
 
@@ -464,14 +464,14 @@ class TableCellExtractFromPdf(object):
 
 
 def main():
-    output_dir = os.path.join(Constants.HTML_BASE_DIR, "pdf_debug", TimeUtils.get_time())
+    output_dir = FileUtils.join_path(Constants.HTML_BASE_DIR, "pdf_debug", TimeUtils.get_time())
     # output_dir = f"{Constants.HTML_BASE_DIR}/pdf_debug/2023-12-27"
 
-    file_dir = os.path.join(Constants.PDF_CACHE_BASE, "ocr_file", "temp_dir")
+    file_dir = FileUtils.join_path(Constants.PDF_CACHE_BASE, "ocr_file", "temp_dir")
 
     page = 79
     # file_name = f"{file_dir}/page-27.pdf"
-    file_name = os.path.join(output_dir, "pdf", f"page-{page}.pdf")
+    file_name = FileUtils.join_path(output_dir, "pdf", f"page-{page}.pdf")
 
     debug = False
     # debug = True

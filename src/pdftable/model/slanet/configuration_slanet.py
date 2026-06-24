@@ -11,6 +11,8 @@ from typing import Mapping, Dict
 
 from transformers import PretrainedConfig
 
+from pdftable.utils.file_utils import FileUtils
+
 __all__ = [
     "SLANetConfig",
 ]
@@ -68,6 +70,6 @@ class SLANetConfig(PretrainedConfig):
     def get_vocab_file(self):
         lang_prefix = "_ch" if self.lang == "ch" else ""
         if self.vocab_file is None or len(self.vocab_file) == 0:
-            return os.path.join(self.model_path, f"table_structure_dict{lang_prefix}.txt")
+            return FileUtils.join_path(self.model_path, f"table_structure_dict{lang_prefix}.txt")
         else:
             return self.vocab_file

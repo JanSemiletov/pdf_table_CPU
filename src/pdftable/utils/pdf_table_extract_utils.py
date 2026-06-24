@@ -34,13 +34,13 @@ class PdfTableExtractUtils(BaseUtil):
             :param password:
 
         """
-        FileUtils.check_file_exists(os.path.join(temp_dir, "temp.txt"))
+        FileUtils.check_file_exists(FileUtils.join_path(temp_dir, "temp.txt"))
         total_page = 0
         # 从缓存读取
         save_file_name = []
         exist_page_list = []
         for page in pages:
-            fpath = os.path.join(temp_dir, f"page-{page}.pdf")
+            fpath = FileUtils.join_path(temp_dir, f"page-{page}.pdf")
             if FileUtils.check_file_exists(fpath):
                 exist_page_list.append(page)
                 save_file_name.append(fpath)
@@ -61,7 +61,7 @@ class PdfTableExtractUtils(BaseUtil):
             pages = []
 
         for page in pages:
-            fpath = os.path.join(temp_dir, f"page-{page}.pdf")
+            fpath = FileUtils.join_path(temp_dir, f"page-{page}.pdf")
             if page in exist_page_list:
                 save_file_name.append(fpath)
                 continue

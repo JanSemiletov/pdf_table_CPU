@@ -75,7 +75,7 @@ class TrainerUtils(BaseUtil):
             logger.info(f"训练指标： {train_out}")
 
             # 保存训练好的模型
-            best_model_path = os.path.join(training_args.output_dir, "best")
+            best_model_path = FileUtils.join_path(training_args.output_dir, "best")
             trainer.save_model(best_model_path)
             logger.info(f"保存训练好的最好模型:{best_model_path}")
 

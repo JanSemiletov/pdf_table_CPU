@@ -175,8 +175,8 @@ class TestPdfTableSystem(unittest.TestCase):
         raw_filename = f"a_pdf_{TimeUtils.now_str_short()}"
         page_show_filename = f"{raw_filename}_show.html"
         html_filename = f"{raw_filename}.html"
-        html_show_file = os.path.join(output_dir, page_show_filename)
-        html_file = os.path.join(output_dir, html_filename)
+        html_show_file = FileUtils.join_path(output_dir, page_show_filename)
+        html_file = FileUtils.join_path(output_dir, html_filename)
         logger.info(f"page html show file : {html_show_file}")
 
         FileUtils.delete_file(html_show_file)

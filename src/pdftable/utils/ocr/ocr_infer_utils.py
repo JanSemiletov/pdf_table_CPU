@@ -103,12 +103,12 @@ class OcrInferUtils(BaseUtil):
 
         parser.add_argument(
             "--vis_font_path", type=str,
-            default=os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
+            default=FileUtils.join_path(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
                                  'doc/fonts/simfang.ttf'))
         parser.add_argument(
             "--rec_char_dict_path",
             type=str,
-            default=os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
+            default=FileUtils.join_path(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
                                  'utils/ocr/other_dict/ppocr_keys_v1.txt'))
 
         # params for text classifier
@@ -132,7 +132,7 @@ class OcrInferUtils(BaseUtil):
         parser.add_argument("--e2e_pgnet_score_thresh", type=float, default=0.5)
         parser.add_argument(
             "--e2e_char_dict_path", type=str,
-            default=os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
+            default=FileUtils.join_path(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
                                  'pytorchocr/utils/ic15_dict.txt'))
         parser.add_argument("--e2e_pgnet_valid_set", type=str, default='totaltext')
         parser.add_argument("--e2e_pgnet_polygon", type=bool, default=True)
@@ -779,7 +779,7 @@ class OcrInferUtils(BaseUtil):
         font_name = Constants.FONT_CONFIG.get(lang, "chinese_cht.ttf")
         model_dir = CommonUtils.download_model_from_hub("cycloneboy/pdftable_config")
 
-        font_path = os.path.join(model_dir,"fonts", font_name)
+        font_path = FileUtils.join_path(model_dir,"fonts", font_name)
         draw_img = OcrInferUtils.draw_ocr_box_txt(image,
                                                   boxes,
                                                   txts,

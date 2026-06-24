@@ -59,7 +59,7 @@ class RunDocxLayout(object):
         # logger.info(f"layout_res: {layout_res}")
 
         image = cv2.imread(image_file)
-        img_path = os.path.join(self.output_dir, FileUtils.get_file_name(image_file, add_end=True))
+        img_path = FileUtils.join_path(self.output_dir, FileUtils.get_file_name(image_file, add_end=True))
         OcrInferUtils.draw_text_layout_res(image, layout_res=layout_dets, save_path=img_path)
 
 

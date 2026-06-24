@@ -9,6 +9,8 @@ import re
 
 import torch
 
+from pdftable.utils.file_utils import FileUtils
+
 
 def load_checkpoint(model,
                     filename,
@@ -39,7 +41,7 @@ def load_checkpoint(model,
     if filename.endswith(".pth") or filename.endswith(".bin"):
         model_path = filename
     else:
-        model_path = os.path.join(filename, "pytorch_model.bin")
+        model_path = FileUtils.join_path(filename, "pytorch_model.bin")
 
     checkpoint = torch.load(model_path, map_location, weights_only=True)
     # OrderedDict is a subclass of dict

@@ -15,7 +15,7 @@ from .configuration_ocr_recognition import OCRRecognitionConfig
 from ..convnext_vit import ConvNextViT
 from ..crnn import CRNN
 from ..ocr_rec_lightweightedge import OcrRecLightweightEdge
-from ...utils import logger
+from ...utils import FileUtils, logger
 
 """
 ocr recognition
@@ -100,9 +100,9 @@ class OCRRecognition(nn.Module):
             )
 
         if config.model_path is not None and config.model_path != '':
-            model_path = os.path.join(config.model_path, 'pytorch_model.bin')
+            model_path = FileUtils.join_path(config.model_path, 'pytorch_model.bin')
             if not os.path.exists(model_path):
-                model_path = os.path.join(config.model_path, 'pytorch_model.pt')
+                model_path = FileUtils.join_path(config.model_path, 'pytorch_model.pt')
 
             params_pretrained = torch.load(model_path, map_location='cpu', weights_only=True)
             model_dict = self.recognizer.state_dict()
@@ -116,7 +116,7 @@ class OCRRecognition(nn.Module):
 
             logger.info(f"加载模型：{model_path}")
 
-        dict_path = os.path.join(config.model_path, 'vocab.txt')
+        dict_path = FileUtils.join_path(config.model_path, 'vocab.txt')
         self.labelMapping = dict()
         self.charMapping = dict()
         with open(dict_path, 'r', encoding='utf-8') as f:

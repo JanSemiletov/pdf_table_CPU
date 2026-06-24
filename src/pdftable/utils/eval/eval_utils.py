@@ -168,16 +168,16 @@ class EvalUtils(BaseUtil):
 
     @staticmethod
     def load_table_pred_and_label(predict_path, label_path):
-        gt_bbox_path = os.path.join(label_path, 'gt_center')
-        gt_logi_path = os.path.join(label_path, 'gt_logi')
-        bbox_path = os.path.join(predict_path, 'center')
-        logi_path = os.path.join(predict_path, 'logi')
+        gt_bbox_path = FileUtils.join_path(label_path, 'gt_center')
+        gt_logi_path = FileUtils.join_path(label_path, 'gt_logi')
+        bbox_path = FileUtils.join_path(predict_path, 'center')
+        logi_path = FileUtils.join_path(predict_path, 'logi')
 
         table_dict = []
         error_list = []
         for file_name in tqdm(os.listdir(gt_bbox_path), desc="load_table"):
-            if not os.path.exists(os.path.join(bbox_path, file_name)) or \
-                    not os.path.exists(os.path.join(logi_path, file_name)):
+            if not os.path.exists(FileUtils.join_path(bbox_path, file_name)) or \
+                    not os.path.exists(FileUtils.join_path(logi_path, file_name)):
                 error_list.append(file_name)
                 continue
 

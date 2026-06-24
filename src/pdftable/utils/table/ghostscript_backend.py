@@ -9,7 +9,7 @@ import glob
 from ctypes.util import find_library
 
 from ...utils import CmdUtils
-from ...utils import logger
+from ...utils import FileUtils, logger
 
 __all__ = [
     "GhostscriptBackend",
@@ -54,7 +54,7 @@ def installed_windows():
 
     for base_path in common_paths:
         if os.path.exists(base_path):
-            dll_pattern = os.path.join(base_path, "**", dll_name)
+            dll_pattern = FileUtils.join_path(base_path, "**", dll_name)
             matches = glob.glob(dll_pattern, recursive=True)
             if matches:
                 return True

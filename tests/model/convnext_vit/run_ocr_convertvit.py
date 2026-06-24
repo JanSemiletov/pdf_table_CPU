@@ -31,7 +31,7 @@ class RunTestConvertVit(object):
 
         self.processor = OCRConvNextViTPreprocessor()
 
-        self.labels = FileUtils.read_to_text_list(os.path.join(self.model_name_or_path, "vocab.txt"))
+        self.labels = FileUtils.read_to_text_list(FileUtils.join_path(self.model_name_or_path, "vocab.txt"))
         self.labelMapping = {index + 2: item for index, item in enumerate(self.labels)}
 
         self.model_dict = {

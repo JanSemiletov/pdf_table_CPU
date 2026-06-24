@@ -145,7 +145,7 @@ class OcrDetectionTask(BaseInferTask):
         image_file = predict['inputs']
         src_im = OcrInferUtils.draw_text_det_res(det_results, image_file)
         img_name_pure = os.path.split(image_file)[-1]
-        img_path = os.path.join(self.output_dir, "det_res_{}".format(img_name_pure))
+        img_path = FileUtils.join_path(self.output_dir, "det_res_{}".format(img_name_pure))
         FileUtils.check_file_exists(img_path)
         cv2.imwrite(img_path, src_im)
         logger.info(f"The visualized image saved in {img_path}")

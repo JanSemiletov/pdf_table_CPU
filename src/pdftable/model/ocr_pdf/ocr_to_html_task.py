@@ -65,7 +65,7 @@ class OcrToHtmlTask(object):
         html = self.ocr_result_to_html(ocr_system_output)
 
         table_html_str = "\n".join(html) + "\n"
-        save_html_file = os.path.join(self.output_dir, f"{ocr_system_output.raw_filename}.html")
+        save_html_file = FileUtils.join_path(self.output_dir, f"{ocr_system_output.raw_filename}.html")
         FileUtils.save_to_text(save_html_file, table_html_str)
         logger.info(f"保存识别的html: {save_html_file}")
         ocr_system_output.save_html_file = save_html_file
@@ -185,9 +185,9 @@ class OcrToHtmlTask(object):
         bbox_str = '_'.join([str(item) for item in bbox])
         save_name = f"image_{bbox_str}.png"
 
-        relative_dir = os.path.join("image", ocr_system_output.page, save_name)
+        relative_dir = FileUtils.join_path("image", ocr_system_output.page, save_name)
 
-        save_image_file = os.path.join(self.output_dir, relative_dir)
+        save_image_file = FileUtils.join_path(self.output_dir, relative_dir)
         cv2.imwrite(save_image_file, image)
         logger.info(f"保存layout图片：{save_image_file}")
 
@@ -203,14 +203,14 @@ class OcrToHtmlTask(object):
             "name": FileUtils.get_file_name(save_image_file),
             "raw_name": save_name,
             "save_name": save_image_file,
-            "relative_dir": os.path.join(".", relative_dir),
+            "relative_dir": FileUtils.join_path(".", relative_dir),
             "bbox": bbox,
             "height": height,
             "width": width,
             "image_size": image.shape[:2],
         }
 
-        image_info_file_name = os.path.join(self.output_dir, "image", str(ocr_system_output.page), "image.json")
+        image_info_file_name = FileUtils.join_path(self.output_dir, "image", str(ocr_system_output.page), "image.json")
         if FileUtils.check_file_exists(image_info_file_name):
             image_infos = FileUtils.load_json(image_info_file_name)
             image_infos.append(image_info)

@@ -14,7 +14,7 @@ import torch.nn as nn
 from .configuration_dbnet import DbNetConfig
 from .dbnet import DBModel, DBNasModel, VLPTModel
 from .ocr_detection_utils import boxes_from_bitmap, polygons_from_bitmap
-from ...utils import logger
+from ...utils import FileUtils, logger
 
 """
 ocr detection
@@ -51,7 +51,7 @@ class OCRDetectionDbNet(nn.Module):
                 f'detector backbone should be either resnet18, resnet50, but got {config.backbone}'
             )
         if config.model_path != '':
-            model_path = os.path.join(config.model_path, 'pytorch_model.pt')
+            model_path = FileUtils.join_path(config.model_path, 'pytorch_model.pt')
             self.detector.load_state_dict(torch.load(model_path, map_location='cpu',weights_only=True), strict=True)
             logger.info(f"加载模型：{model_path}")
 

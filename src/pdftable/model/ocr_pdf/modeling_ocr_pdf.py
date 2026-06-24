@@ -171,17 +171,17 @@ class OcrDocument(object):
         detection_model_name_or_path = self.config.model_path_detector
         recognition_model_name_or_path = self.config.model_path_recognizer
         if self.config.model_path is not None and self.config.model_path != "":
-            detection_model_name_or_path = os.path.join(self.config.model_path, "detection")
-            recognition_model_name_or_path = os.path.join(self.config.model_path, "recognition")
+            detection_model_name_or_path = FileUtils.join_path(self.config.model_path, "detection")
+            recognition_model_name_or_path = FileUtils.join_path(self.config.model_path, "recognition")
 
         if detection_model_name_or_path == "":
             detection_model_config = self.model_dict["detection"][self.config.detector]["general"]["model"]
-            detection_model_name_or_path = os.path.join(Constants.SCOPE_MODEL_BASE_DIR, detection_model_config)
+            detection_model_name_or_path = FileUtils.join_path(Constants.SCOPE_MODEL_BASE_DIR, detection_model_config)
 
         if recognition_model_name_or_path == "":
             recognition_model_config = self.model_dict["recognition"][self.config.recognizer][self.config.task_type][
                 "model"]
-            recognition_model_name_or_path = os.path.join(Constants.SCOPE_MODEL_BASE_DIR, recognition_model_config)
+            recognition_model_name_or_path = FileUtils.join_path(Constants.SCOPE_MODEL_BASE_DIR, recognition_model_config)
 
         self.build_detection_model(model_name_or_path=detection_model_name_or_path)
         self.build_recognition_model(model_name_or_path=recognition_model_name_or_path)
@@ -332,7 +332,7 @@ class OcrDocument(object):
             logger.info(f"ocr_result_show: {ocr_result_show}")
             logger.info(f"metric: {metric}")
 
-            save_file = os.path.join(self.output_dir, f"ocr_{FileUtils.get_file_name(inputs)}_{TimeUtils.now_str_short()}.png")
+            save_file = FileUtils.join_path(self.output_dir, f"ocr_{FileUtils.get_file_name(inputs)}_{TimeUtils.now_str_short()}.png")
             FileUtils.check_file_exists(save_file)
 
             image_draw = OcrCommonUtils.draw_boxes(image_full=image_full, det_result=det_result)

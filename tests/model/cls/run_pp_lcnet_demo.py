@@ -82,14 +82,14 @@ class RunPpLcnetDemo(object):
     def build_model(self):
         model = PPLCNet(**self.get_config())
         os.makedirs(self.output_dir, exist_ok=True)
-        save_dir = os.path.join(self.output_dir, f"{self.model_name}_{self.task_name}".lower())
+        save_dir = FileUtils.join_path(self.output_dir, f"{self.model_name}_{self.task_name}".lower())
         CommonUtils.print_model_param(model, save_dir=save_dir)
 
         model.to(self.device)
         model.eval()
 
         map_loc = 'cpu' if self.device == 'cpu' else None
-        pretrain_weight = os.path.join(self.model_base_dir, self.task_name, "pytorch_model.bin")
+        pretrain_weight = FileUtils.join_path(self.model_base_dir, self.task_name, "pytorch_model.bin")
         checkpoint = load_checkpoint(model, pretrain_weight, map_location=map_loc)
 
         image_processor = PPLCNetImageProcessor(task=self.task_name)
@@ -102,7 +102,7 @@ class RunPpLcnetDemo(object):
             "text_image_orientation": []
         }
         # image_list = image_batch[self.task_name]
-        image_list = FileUtils.list_file_prefix(file_dir=os.path.join(self.image_base_dir, self.task_name), add_parent=True)
+        image_list = FileUtils.list_file_prefix(file_dir=FileUtils.join_path(self.image_base_dir, self.task_name), add_parent=True)
 
         for image in image_list:
             image_name = FileUtils.get_file_name(image)
@@ -121,7 +121,7 @@ class RunPpLcnetDemo(object):
     def run_cls_task(self):
         task = ClsImagePulcTask(task_type=self.task_name)
         # task = OcrTablePreprocessTask()
-        image_list = FileUtils.list_file_prefix(file_dir=os.path.join(self.image_base_dir, self.task_name), add_parent=True)
+        image_list = FileUtils.list_file_prefix(file_dir=FileUtils.join_path(self.image_base_dir, self.task_name), add_parent=True)
 
         for image in image_list:
             image_name = FileUtils.get_file_name(image)

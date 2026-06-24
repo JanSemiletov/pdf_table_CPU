@@ -15,7 +15,7 @@ from pdftable.entity.common_entity import ModelArguments, DataTrainingArguments
 from pdftable.eval.table_metric import TableWtwComputeMetric
 from pdftable.model import LoreModel, TableLorePostProcessor
 from pdftable.trainer.table_trainer import TableTrainer
-from pdftable.utils import logger, Constants, TimeUtils, CommonUtils
+from pdftable.utils import logger, Constants, TimeUtils, CommonUtils, FileUtils
 from pdftable.utils.trainer_utils import TrainerUtils
 
 
@@ -35,9 +35,9 @@ class RunTableTrainer(object):
         if base_dir is None:
             base_dir = f"{self.wtw_dir}/{split}"
 
-        image_path = os.path.join(base_dir, "images")
-        label_path = os.path.join(base_dir, "json", f"{split}.json")
-        # label_path = os.path.join(base_dir, "txt")
+        image_path = FileUtils.join_path(base_dir, "images")
+        label_path = FileUtils.join_path(base_dir, "json", f"{split}.json")
+        # label_path = FileUtils.join_path(base_dir, "txt")
 
         if split != "train":
             batch_size = 1
@@ -231,9 +231,9 @@ class RunTableTrainer(object):
         name = "simple"
 
         base_dir = f"{self.wtw_dir}/eval_demo/{name}"
-        # image_path = os.path.join(base_dir, "images")
-        # label_path = os.path.join(base_dir, "json", "test.json")
-        # label_path = os.path.join(base_dir, "txt")
+        # image_path = FileUtils.join_path(base_dir, "images")
+        # label_path = FileUtils.join_path(base_dir, "json", "test.json")
+        # label_path = FileUtils.join_path(base_dir, "txt")
         label_path = f"{self.wtw_dir}/test/txt"
 
         compute_metrics = TableWtwComputeMetric(predict_dir=f"{output_dir}/wtw",

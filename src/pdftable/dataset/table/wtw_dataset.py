@@ -160,12 +160,12 @@ class WtwDataset(Dataset):
         exist_images = []
         table_labels = []
 
-        gt_bbox_path = os.path.join(label_path, 'gt_center')
-        gt_logi_path = os.path.join(label_path, 'gt_logi')
+        gt_bbox_path = FileUtils.join_path(label_path, 'gt_center')
+        gt_logi_path = FileUtils.join_path(label_path, 'gt_logi')
 
         for file_name in tqdm(os.listdir(gt_bbox_path), desc="load_table"):
             raw_file_name = file_name[:-4]
-            logi_path = os.path.join(gt_logi_path, file_name)
+            logi_path = FileUtils.join_path(gt_logi_path, file_name)
             if (raw_file_name not in dir_image_set or not file_name.endswith(".txt")
                     or not os.path.exists(logi_path)):
                 not_exist += 1
@@ -180,8 +180,8 @@ class WtwDataset(Dataset):
         return exist_images, table_labels
 
     def load_one_label_from_txt(self, file_name) -> TableWtw:
-        bbox_dir = os.path.join(self.label_path, 'gt_center', f"{file_name}.txt")
-        axis_dir = os.path.join(self.label_path, 'gt_logi', f"{file_name}.txt")
+        bbox_dir = FileUtils.join_path(self.label_path, 'gt_center', f"{file_name}.txt")
+        axis_dir = FileUtils.join_path(self.label_path, 'gt_logi', f"{file_name}.txt")
         table_units = TableEval.load_tabu(bbox_dir, axis_dir)
         table = TableWtw(TableEval.bubble_sort(table_units))
         return table
@@ -218,7 +218,7 @@ class WtwDataset(Dataset):
         file_paths = []
         for img_id in image_id:
             file_name = self.img_id_mapping[img_id]
-            file_path = os.path.join(self.image_path, file_name)
+            file_path = FileUtils.join_path(self.image_path, file_name)
             file_paths.append(file_path)
 
         if single:
@@ -241,7 +241,7 @@ class WtwDataset(Dataset):
         return len(self.images)
 
     def __getitem__(self, idx):
-        image = os.path.join(self.image_path, self.images[idx])
+        image = FileUtils.join_path(self.image_path, self.images[idx])
 
         if self.labels is None:
             one_item = self.pre_processor(image)[0]

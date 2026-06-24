@@ -74,7 +74,7 @@ class BaseTrainer(Trainer):
 
         self.current_best_metric = 0 if self.args.greater_is_better else 1e9
         self.current_epoch_and_step = ""
-        self.metric_show_file_name = os.path.join(self.output_dir, "metric_show.txt")
+        self.metric_show_file_name = FileUtils.join_path(self.output_dir, "metric_show.txt")
         self.total_time = 0
 
         ####################################################################
@@ -98,15 +98,15 @@ class BaseTrainer(Trainer):
             best_flag = best_metric > self.current_best_metric if self.args.greater_is_better else best_metric < self.current_best_metric
             if best_flag:
                 model_state_dict = self.model.state_dict()
-                save_dir = os.path.join(self.output_dir, "best_model")
-                save_best_model_path = os.path.join(save_dir, "pytorch_model.bin")
+                save_dir = FileUtils.join_path(self.output_dir, "best_model")
+                save_best_model_path = FileUtils.join_path(save_dir, "pytorch_model.bin")
                 FileUtils.check_file_exists(save_best_model_path)
                 torch.save(model_state_dict, save_best_model_path)
 
                 # copy vocab and config file
                 file_name_list = ["vocab.txt", "config.json", "special_tokens_map.json", "tokenizer_config.json"]
                 for file_name in file_name_list:
-                    file_path = os.path.join(self.model_args.model_name_or_path, file_name)
+                    file_path = FileUtils.join_path(self.model_args.model_name_or_path, file_name)
                     FileUtils.copy_file(file_path, save_dir)
                 self.current_best_metric = best_metric
                 self.current_epoch_and_step = self.get_current_epoch_and_step()
@@ -178,7 +178,7 @@ class BaseTrainer(Trainer):
         run_log = []
 
         FileUtils.dump_json(file_name, all_metric, show_info=self.show_info)
-        output_dir = os.path.join(self.output_dir, "eval_metric")
+        output_dir = FileUtils.join_path(self.output_dir, "eval_metric")
         add_suffix = self.get_current_epoch_and_step()
         eval_result_path = f"{output_dir}/eval_{add_suffix}_metric.json"
         FileUtils.dump_json(eval_result_path, all_metric)

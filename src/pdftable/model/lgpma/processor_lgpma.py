@@ -84,7 +84,7 @@ class LgpmaPostProcessor(object):
         boxes = preds["polygons"]
 
         if self.output_dir is not None:
-            image_file = os.path.join(self.output_dir, f"{FileUtils.get_file_name(image_name)}_{TimeUtils.now_str_short()}.jpg")
+            image_file = FileUtils.join_path(self.output_dir, f"{FileUtils.get_file_name(image_name)}_{TimeUtils.now_str_short()}.jpg")
             img = cv2.imread(image_name)
             bboxes = [[b[0], b[1], b[2], b[1], b[2], b[3], b[0], b[3]] for b in boxes]
             for box in bboxes:

@@ -140,9 +140,9 @@ class RunTableLore(object):
     def load_lore_dataset(self, split='train', batch_size=4):
         base_dir = f"{Constants.DATA_DIR}/table/wtw/test"
         base_dir2 = f"{Constants.DATA_DIR}/table/wtw/WTW-labels"
-        image_path = os.path.join(base_dir, "images")
-        label_path = os.path.join(base_dir, "json", "test.json")
-        # label_path = os.path.join(base_dir2, "txt")
+        image_path = FileUtils.join_path(base_dir, "images")
+        label_path = FileUtils.join_path(base_dir, "json", "test.json")
+        # label_path = FileUtils.join_path(base_dir2, "txt")
 
         if split != "train":
             batch_size = 1

@@ -82,7 +82,7 @@ class OcrPdfTextTask(object):
 
         self.pdf_images, self.pdf_image_mapping = PdfUtils.save_pdf_image(images=images,
                                                                           output_dir=self.output_dir,
-                                                                          image_dir=os.path.join("image", str(ocr_system_output.page)))
+                                                                          image_dir=FileUtils.join_path("image", str(ocr_system_output.page)))
         self.pdf_width, self.pdf_height = dimensions
 
         self.image_scalers, self.pdf_scalers = TableProcessUtils.get_pdf_scaler(image_shape=[image_height, image_width],
@@ -211,7 +211,7 @@ class OcrPdfTextTask(object):
     def show_text_cells(self, ocr_system_output: OcrSystemModelOutput, ocr_cells: List[OcrCell]):
         if self.output_dir is not None and self.debug:
             file_name = ocr_system_output.file_name
-            save_image_file = os.path.join(self.output_dir, f"{FileUtils.get_file_name(file_name)}_text_cell.jpg")
+            save_image_file = FileUtils.join_path(self.output_dir, f"{FileUtils.get_file_name(file_name)}_text_cell.jpg")
             image_file = ocr_system_output.image_name
             image = cv2.imread(image_file)
             cell_text_image_file = TableProcessUtils.show_text_cell(image=image,

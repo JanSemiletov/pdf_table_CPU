@@ -35,6 +35,8 @@ try:
 except ImportError:
     TJCS_RGB = TJPF_GRAY = TJPF_BGR = TurboJPEG = None
 
+from pdftable.utils.file_utils import FileUtils
+
 
 jpeg = None
 supported_backends = ['cv2', 'turbojpeg', 'pillow', 'tifffile']
@@ -1139,7 +1141,7 @@ def draw_texts_by_pil(img, texts, boxes=None):
         box_width = max(max_x - min_x, max_y - min_y)
         font_size = int(0.9 * box_width / len(text))
         dirname, _ = os.path.split(os.path.abspath(__file__))
-        font_path = os.path.join(dirname, 'font.TTF')
+        font_path = FileUtils.join_path(dirname, 'font.TTF')
         if not os.path.exists(font_path):
             url = ('http://download.openmmlab.com/mmocr/data/font.TTF')
             print(f'Downloading {url} ...')

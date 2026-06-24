@@ -97,20 +97,20 @@ class LoreModel(nn.Module):
 
     def load_model(self, ):
         epoch = ""
-        model_path = os.path.join(self.config.model_path, "pytorch_model.pt")
+        model_path = FileUtils.join_path(self.config.model_path, "pytorch_model.pt")
         if FileUtils.check_file_exists(model_path):
             checkpoint = torch.load(model_path, map_location='cpu')
             load_lore_model(self.detect_infer_model, checkpoint, 'model')
             load_lore_model(self.process_infer_model, checkpoint, 'processor')
         else:
             model_name_or_path = self.config.model_path
-            model_path = os.path.join(model_name_or_path, "model_best.pth")
+            model_path = FileUtils.join_path(model_name_or_path, "model_best.pth")
             model_checkpoint = torch.load(model_path, map_location='cpu', weights_only=True)
             load_lore_model(self.detect_infer_model, model_checkpoint, strict=True)
 
             epoch = model_checkpoint.get('epoch', "")
 
-            processor_path = os.path.join(model_name_or_path, "processor_best.pth")
+            processor_path = FileUtils.join_path(model_name_or_path, "processor_best.pth")
             processor_checkpoint = torch.load(processor_path, map_location='cpu', weights_only=True)
             load_lore_model(self.process_infer_model, processor_checkpoint, strict=True)
 

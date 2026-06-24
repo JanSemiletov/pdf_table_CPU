@@ -15,6 +15,7 @@ __all__ = [
 ]
 
 from pdftable.utils.ocr import OcrCommonUtils
+from pdftable.utils.file_utils import FileUtils
 
 
 class PPOcrRecognitionConfig(PretrainedConfig):
@@ -73,6 +74,6 @@ class PPOcrRecognitionConfig(PretrainedConfig):
 
     def get_vocab_file(self):
         if self.vocab_file is None or len(self.vocab_file) == 0:
-            return os.path.join(self.model_path, f"{self.lang}_dict.txt")
+            return FileUtils.join_path(self.model_path, f"{self.lang}_dict.txt")
         else:
             return self.vocab_file

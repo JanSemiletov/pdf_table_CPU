@@ -12,6 +12,7 @@ from transformers import PretrainedConfig
 
 from pdftable.model.table.lgpma.base_config import Config
 from pdftable.utils.constant import TABLE_ABS_PATH
+from pdftable.utils.file_utils import FileUtils
 
 """
 LGPMA configuration
@@ -47,7 +48,7 @@ class LgpmaConfig(PretrainedConfig):
             model_name: str = "Lgpma",
             backbone: str = "ResNet",
             task_type: str = "PubTabNet",
-            config_file: str = os.path.join(TABLE_ABS_PATH, "lgpma", "lgpma_base.py"),
+            config_file: str = FileUtils.join_path(TABLE_ABS_PATH, "lgpma", "lgpma_base.py"),
             model_path: str = "",
             debug: bool = True,
             **kwargs

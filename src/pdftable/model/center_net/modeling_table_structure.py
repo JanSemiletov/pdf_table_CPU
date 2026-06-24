@@ -11,7 +11,7 @@ from torch import nn
 
 from .configuration_centernet import TableCenterNetConfig
 from .modeling_centernet import DLASeg
-from ...utils import logger
+from ...utils import FileUtils, logger
 
 __all__ = [
     "TableStructureRec"
@@ -30,9 +30,9 @@ class TableStructureRec(nn.Module):
                                  head_conv=256)
 
         if config.model_path is not None and config.model_path != '':
-            raw_model_path = os.path.join(config.model_path, 'pytorch_model.bin')
+            raw_model_path = FileUtils.join_path(config.model_path, 'pytorch_model.bin')
             if not os.path.exists(raw_model_path):
-                raw_model_path = os.path.join(config.model_path, 'pytorch_model.pt')
+                raw_model_path = FileUtils.join_path(config.model_path, 'pytorch_model.pt')
 
             checkpoint = torch.load(raw_model_path, map_location='cpu')
             params_pretrained = checkpoint['state_dict'] if 'state_dict' in checkpoint else checkpoint

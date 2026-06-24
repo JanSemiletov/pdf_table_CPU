@@ -12,6 +12,7 @@ from transformers import PretrainedConfig
 
 from pdftable.model.table.lgpma.base_config import Config
 from pdftable.utils.constant import TABLE_ABS_PATH
+from pdftable.utils.file_utils import FileUtils
 
 """
 MtlTabnet configuration
@@ -47,7 +48,7 @@ class MtlTabnetConfig(PretrainedConfig):
             model_name: str = "MtlTabNet",
             backbone: str = "TableResNetExtra",
             task_type: str = "PubTabNet",
-            config_file: str = os.path.join(TABLE_ABS_PATH, "mtl_tabnet", "mtl_tabnet_config.py"),
+            config_file: str = FileUtils.join_path(TABLE_ABS_PATH, "mtl_tabnet", "mtl_tabnet_config.py"),
             model_path: str = "",
             debug: bool = True,
             **kwargs
@@ -71,9 +72,9 @@ class MtlTabnetConfig(PretrainedConfig):
 
     def get_config_file(self, default_config):
         config_mapping = {
-            "Lgpma": os.path.join(TABLE_ABS_PATH, "lgpma", "lgpma_base.py"),
-            "MtlTabNet": os.path.join(TABLE_ABS_PATH, "mtl_tabnet", "mtl_tabnet_config.py"),
-            "TableMaster": os.path.join(TABLE_ABS_PATH, "mtl_tabnet", "table_master_config.py"),
+            "Lgpma": FileUtils.join_path(TABLE_ABS_PATH, "lgpma", "lgpma_base.py"),
+            "MtlTabNet": FileUtils.join_path(TABLE_ABS_PATH, "mtl_tabnet", "mtl_tabnet_config.py"),
+            "TableMaster": FileUtils.join_path(TABLE_ABS_PATH, "mtl_tabnet", "table_master_config.py"),
         }
 
         config_file = config_mapping.get(self.model_name, default_config)

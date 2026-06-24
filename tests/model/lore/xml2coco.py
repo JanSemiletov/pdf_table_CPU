@@ -8,6 +8,8 @@ import xml.etree.ElementTree as ET
 import os
 import json
 
+from pdftable.utils.file_utils import FileUtils
+
 coco = dict()
 coco['images'] = []
 coco['type'] = 'instances'
@@ -86,7 +88,7 @@ def parseXmlFiles(XML_path):
             size['height'] = None
             size['depth'] = None
 
-            xml_file = os.path.join(xml_path, f)
+            xml_file = FileUtils.join_path(xml_path, f)
             print(xml_file)
 
             tree = ET.parse(xml_file)

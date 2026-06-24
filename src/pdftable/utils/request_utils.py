@@ -15,6 +15,7 @@ from urllib.request import Request, urlopen
 import requests
 
 from .base_utils import BaseUtil
+from pdftable.utils.file_utils import FileUtils
 
 """
 request 相关工具类
@@ -82,6 +83,6 @@ class RequestUtils(BaseUtil):
             if content_type != "application/pdf":
                 raise NotImplementedError("File format not supported")
             f.write(obj.read())
-        filepath = os.path.join(os.path.dirname(f.name), filename)
+        filepath = FileUtils.join_path(os.path.dirname(f.name), filename)
         shutil.move(f.name, filepath)
         return filepath

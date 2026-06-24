@@ -255,8 +255,8 @@ class DeployUtils(BaseUtil):
             use_fp16 = "fp16" in onnx_dir.lower()
         else:
             os.makedirs(onnx_dir, exist_ok=True)
-            float_onnx_file = os.path.join(onnx_dir, "model.onnx")
-            fp16_model_file = os.path.join(onnx_dir, "fp16_model.onnx")
+            float_onnx_file = FileUtils.join_path(onnx_dir, "model.onnx")
+            fp16_model_file = FileUtils.join_path(onnx_dir, "fp16_model.onnx")
             # for CPU execution, use FP32 model
             if not use_gpu:
                 model_file = float_onnx_file

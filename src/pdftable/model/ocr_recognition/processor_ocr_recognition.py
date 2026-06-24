@@ -20,6 +20,7 @@ import torch
 import torch.nn.functional as F
 
 from .configuration_ocr_recognition import OCRRecognitionConfig
+from pdftable.utils.file_utils import FileUtils
 
 __all__ = [
     "OCRRecognitionPreprocessor",
@@ -130,7 +131,7 @@ class OCRRecognitionPostProcessor(object):
         self.load_vocab()
 
     def load_vocab(self):
-        dict_path = os.path.join(self.config.model_path, self.vocab_file)
+        dict_path = FileUtils.join_path(self.config.model_path, self.vocab_file)
 
         with open(dict_path, 'r', encoding='utf-8') as f:
             lines = f.readlines()
