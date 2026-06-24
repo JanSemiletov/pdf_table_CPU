@@ -17,6 +17,7 @@ class CmdUtils(BaseUtil):
 
     @staticmethod
     def run_cmd(cmd, timeout=300):
+    def run_cmd(cmd, timeout=300):
         """
 
         :param cmd:
