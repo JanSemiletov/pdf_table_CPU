@@ -16,7 +16,7 @@ class CmdUtils(BaseUtil):
         pass
 
     @staticmethod
-    def run_cmd(cmd):
+    def run_cmd(cmd, timeout=300):
         """
 
         :param cmd:
@@ -24,8 +24,30 @@ class CmdUtils(BaseUtil):
         """
         r = None
         try:
-            p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
-            r = p.stdout.read()
+            if isinstance(cmd, str):
+                p = subprocess.Popen(
+                    cmd,
+                    shell=True,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE
+                )
+            else:
+                p = subprocess.Popen(
+                    cmd,
+                    shell=False,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE
+                )
+            
+            r, err = p.communicate(timeout=timeout)
+
+            if p.returncode != 0 and err:
+                print(f"Command stderr: {err.decode("utf-8", errors="ignore")}")
+
+        except subprocess.TimeoutExpired:
+            p.kill()
+            print(f"Command timed out after {timeout} seconds")        
         except Exception as e:
             traceback.print_exc()
+            
         return r
