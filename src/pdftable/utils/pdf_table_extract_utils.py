@@ -8,7 +8,10 @@ import os
 import traceback
 from typing import List, Union
 
-from . import BaseUtil, logger, PdfUtils, FileUtils
+from .base_utils import BaseUtil
+from .logger_utils import logger
+from .pdf_utils import PdfUtils
+from .file_utils import FileUtils
 
 """
 PDF表格提取工具类

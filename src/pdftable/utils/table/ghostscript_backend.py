@@ -8,8 +8,9 @@ import subprocess
 import glob
 from ctypes.util import find_library
 
-from ...utils import CmdUtils
-from ...utils import FileUtils, logger
+from ..cmd_utils import CmdUtils
+from ..file_utils import FileUtils
+from ..logger_utils import logger
 
 __all__ = [
     "GhostscriptBackend",

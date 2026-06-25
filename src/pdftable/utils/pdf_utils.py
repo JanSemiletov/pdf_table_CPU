@@ -41,7 +41,13 @@ from pdfminer.pdfparser import PDFParser
 from pypdf import PdfReader, PdfWriter, PageObject
 
 from pdftable.entity.table_entity import OcrCell, Line, Point
-from . import BaseUtil, logger, FileUtils, TimeUtils, MathUtils, CommonUtils, Constants
+from .base_utils import BaseUtil 
+from .logger_utils import logger
+from .file_utils import FileUtils
+from .time_utils import TimeUtils
+from .math_utils import MathUtils
+from .common_utils import CommonUtils
+from .constant import Constants
 from .table.image_processing import PdfImageProcessor
 from ..entity import PdfLineType, HtmlContentType
 

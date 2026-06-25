@@ -10,7 +10,7 @@ import time
 from logging import handlers
 from pathlib import Path
 
-from . import Constants
+from .constant import Constants
 
 
 class Logger(object):

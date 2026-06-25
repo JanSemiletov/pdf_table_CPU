@@ -15,7 +15,7 @@ from urllib.request import Request, urlopen
 import requests
 
 from .base_utils import BaseUtil
-from pdftable.utils.file_utils import FileUtils
+from .file_utils import FileUtils
 
 """
 request 相关工具类

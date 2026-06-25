@@ -18,7 +18,9 @@ from pdfminer.layout import LTImage
 from pdftable.entity import LineDirectionType
 from pdftable.entity.table_entity import Point, Line
 
-from pdftable.utils import logger, FileUtils, MathUtils
+from ..logger_utils import logger
+from ..file_utils import FileUtils
+from ..math_utils import MathUtils
 from pdftable.utils.table import GhostscriptBackend
 
 """

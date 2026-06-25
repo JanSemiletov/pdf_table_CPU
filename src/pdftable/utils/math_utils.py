@@ -10,7 +10,9 @@ import uuid
 import hashlib
 from typing import List
 
-from . import logger, BaseUtil, Constants
+from .logger_utils import logger
+from .base_utils import BaseUtil
+from .constant import Constants
 
 """
 数学相关工具类

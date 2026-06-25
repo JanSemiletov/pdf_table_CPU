@@ -9,7 +9,7 @@ import json
 from dataclasses import field, dataclass
 from typing import Optional
 
-from pdftable.utils import Constants
+from pdftable.utils.constant import Constants
 
 
 @dataclass
