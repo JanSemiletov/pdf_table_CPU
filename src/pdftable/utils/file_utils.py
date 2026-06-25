@@ -466,7 +466,7 @@ class FileUtils(BaseUtil):
         if file_name is None or len(file_name) < 1:
             return ""
 
-        begin_index = str(file_name).rfind("/")
+        begin_index = str(file_name).rfind(os.path.sep)
         if add_end:
             return file_name[(begin_index + 1):]
         end_index = str(file_name).rfind(".")
@@ -479,7 +479,7 @@ class FileUtils(BaseUtil):
         :param file_name:
         :return:
         """
-        begin_index = str(file_name).rfind("/")
+        begin_index = str(file_name).rfind(os.path.sep)
         return file_name[(begin_index + 1):]
 
     @staticmethod
@@ -565,7 +565,7 @@ class FileUtils(BaseUtil):
         :return:
         """
         dir_name = FileUtils.get_dir_file_name(file_name)
-        begin_index = str(dir_name).rfind("/")
+        begin_index = str(dir_name).rfind(os.path.sep)
         return dir_name[(begin_index + 1):]
 
     @staticmethod
