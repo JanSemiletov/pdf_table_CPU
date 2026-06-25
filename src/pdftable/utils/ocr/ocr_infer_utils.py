@@ -19,7 +19,10 @@ import torch
 from PIL import Image, ImageDraw, ImageFont
 
 from pdftable.entity import OcrCell
-from pdftable.utils import BaseUtil, FileUtils, Constants, CommonUtils
+from ..base_utils import BaseUtil
+from ..file_utils import FileUtils
+from ..constant import Constants
+from ..common_utils import CommonUtils
 from pdftable.utils.colormap import colormap
 from pdftable.utils.ocr import OcrCommonUtils
 

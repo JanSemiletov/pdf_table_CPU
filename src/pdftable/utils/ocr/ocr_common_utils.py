@@ -15,7 +15,9 @@ import numpy as np
 import requests
 from PIL import Image, ImageDraw
 
-from pdftable.utils import BaseUtil, logger, FileUtils
+from ..base_utils import BaseUtil
+from ..logger_utils import logger
+from ..file_utils import FileUtils
 
 """
 OCR 基础工具

@@ -21,7 +21,10 @@ import math
 _VALID_URLS = set(uses_relative + uses_netloc + uses_params)
 _VALID_URLS.discard("")
 
-from . import BaseUtil, logger, TimeUtils, Constants
+from .base_utils import BaseUtil
+from .logger_utils import logger
+from .time_utils import TimeUtils
+from .constant import Constants
 
 '''
 文件处理的工具类

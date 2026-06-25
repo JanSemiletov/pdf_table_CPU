@@ -15,8 +15,11 @@ from transformers import TrainingArguments, HfArgumentParser
 
 from pdftable.entity import HtmlTableCompareType
 from pdftable.entity.common_entity import ModelArguments, DataTrainingArguments
-from pdftable.utils import BaseUtil, FileUtils, logger, Constants
-from pdftable.utils.match_utils import MatchUtils
+from .base_utils import BaseUtil
+from .file_utils import FileUtils
+from .logger_utils import logger
+from .constant import Constants
+from .match_utils import MatchUtils
 
 """
 通用工具类

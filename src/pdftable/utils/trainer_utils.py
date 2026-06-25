@@ -11,7 +11,12 @@ from typing import List
 from transformers import Trainer, PreTrainedTokenizer, TrainingArguments
 
 from pdftable.entity.common_entity import ModelArguments, DataTrainingArguments
-from pdftable.utils import BaseUtil, FileUtils, Constants, TimeUtils, logger, CommonUtils
+from .base_utils import BaseUtil
+from .file_utils import FileUtils
+from .constant import Constants
+from .time_utils import TimeUtils
+from .logger_utils import logger
+from .common_utils import CommonUtils
 
 
 class TrainerUtils(BaseUtil):

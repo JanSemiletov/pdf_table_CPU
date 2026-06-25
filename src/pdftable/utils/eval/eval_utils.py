@@ -15,6 +15,11 @@ from tqdm import tqdm
 
 from pdftable.entity import TableEval
 from pdftable.utils import BaseUtil, logger, FileUtils, TimeUtils, CommonUtils
+from ..base_utils import BaseUtil
+from ..logger_utils import logger
+from ..file_utils import FileUtils
+from ..time_utils import TimeUtils
+from ..common_utils import CommonUtils
 
 EMPTY = 'empty'
 NULL = 'null'
