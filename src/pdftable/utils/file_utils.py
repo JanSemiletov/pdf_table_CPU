@@ -900,4 +900,4 @@ class FileUtils(BaseUtil):
             if not path is None:
                 filtered_paths.append(str(path))
 
-        return FileUtils.join_path(*filtered_paths)
+        return os.path.join(*filtered_paths)
