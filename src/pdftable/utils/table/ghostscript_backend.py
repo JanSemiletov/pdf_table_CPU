@@ -48,8 +48,8 @@ def installed_windows():
         pass
 
     common_paths = [
-        r"C\Program Files\gs",
-        r"C\Program Files (x86)\gs"
+        r"C:\Program Files\gs",
+        r"C:\Program Files (x86)\gs"
     ]
     dll_name = "".join(("gsdll", str(ctypes.sizeof(ctypes.c_void_p) * 8), ".dll"))
 
@@ -63,7 +63,7 @@ def installed_windows():
     return False
 
 def get_gs_command_windows():
-    if ctypes.sizeof(ctypes.c_void_p) == 0:
+    if ctypes.sizeof(ctypes.c_void_p) == 8:
         return "gswin64c.exe"
     else:
         return "gswin32c.exe"
@@ -123,6 +123,16 @@ class GhostscriptBackend(object):
         extract_success = False
         metric = {}
         try:
+            if not os.path.exists(pdf_path):
+                logger.error(f"Input PDF does not exist: {pdf_path}")
+                metric["error"] = f"Input PDF not found: {pdf_path}"
+                return False, metric
+            
+            png_dir = os.path.dirname(png_path)
+            if png_dir and not os.path.exists(png_dir):
+                os.makedirs(png_dir, exist_ok=True)
+                logger.info(f"Created output directory: {png_dir}")
+
             gs_cmd = get_gs_command()
             gs_command = [
                 gs_cmd,
@@ -133,7 +143,7 @@ class GhostscriptBackend(object):
                 f"-r{resolution}",
                 pdf_path,
             ]
-            logger.info(f"Starting ghostscript:{' '.join(gs_command)}")
+            logger.info(f"Starting ghostscript: {' '.join(gs_command)}")
 
             result = subprocess.run(
                 gs_command,
@@ -143,20 +153,32 @@ class GhostscriptBackend(object):
             )
 
             if result.returncode == 0:
-                extract_success = True
-                logger.info("Ghostscript completed successfully")
+                if os.path.exists(png_path):
+                    extract_success = True
+                    logger.info(f"Ghostscript completed successfully. Output: {png_path}")
+                else:
+                    logger.error(f"Ghostscript returned success but output file not found: {png_path}")
+                    logger.error(f"stdout: {result.stdout}")
+                    logger.error(f"stderr: {result.stderr}")
             else:
                 logger.error(f"Ghostscript failed with return code {result.returncode}")
+                logger.error(f"stdout: {result.stdout}")
                 logger.error(f"stderr: {result.stderr}")
 
             metric["cmd"] = " ".join(gs_command)
             metric["returncode"] = result.returncode
+            metric["stdout"] = result.stdout
+            metric["stderr"] = result.stderr
 
         except subprocess.TimeoutExpired:
             logger.error("Ghostscript command timed out after 5 minutes")
-        except FileNotFoundError:
-            logger.error(f"Ghostscript comman '{gs_command}' not found. Make sure Ghostscript is installed and in PATH")
+            metric["error"] = "Timeout after 300 seconds"
+        except FileNotFoundError as e:
+            logger.error(f"Ghostscript command '{gs_cmd}' not found. Make sure Ghostscript is installed and in PATH")
+            metric["error"] = f"Ghostscript not found: {str(e)}"
         except Exception as e:
             logger.error(f"Ghostscript conversion failed: {e}")
+            metric["error"] = str(e)
+            traceback.print_exc()
 
         return extract_success, metric
