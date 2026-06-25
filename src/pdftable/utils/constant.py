@@ -8,15 +8,13 @@ import os
 
 from dotenv import load_dotenv
 
-from pdftable.utils.file_utils import FileUtils
-
 CURRENT_ABS_PATH = os.path.abspath(__file__)
 PDF_TABLE_ABS_PATH = os.path.abspath(os.path.dirname(CURRENT_ABS_PATH) + os.path.sep + "..")
 SRC_ABS_PATH = os.path.abspath(os.path.dirname(PDF_TABLE_ABS_PATH) + os.path.sep + "..")
 
-TABLE_ABS_PATH = os.path.abspath(FileUtils.join_path(PDF_TABLE_ABS_PATH, "model/table"))
+TABLE_ABS_PATH = os.path.abspath(os.path.join(PDF_TABLE_ABS_PATH, "model/table"))
 
-load_dotenv(os.getenv("PDF_TABLE_ENV", FileUtils.join_path(SRC_ABS_PATH, ".env")))
+load_dotenv(os.getenv("PDF_TABLE_ENV", os.path.join(SRC_ABS_PATH, ".env")))
 
 
 def get_user_home():
@@ -44,21 +42,21 @@ class Constants(object):
     USER_HOME = get_user_home()
 
     PDFTABLE_USE_MODELSCOPE_HUB = getenv("PDFTABLE_USE_MODELSCOPE_HUB", "0").lower() in ["true", "1"]
-    PDFTABLE_BASE_OUTPUT_DIR = getenv("PDFTABLE_BASE_OUTPUT_DIR", default=FileUtils.join_path(USER_HOME, ".cache", "pdftable"))
+    PDFTABLE_BASE_OUTPUT_DIR = getenv("PDFTABLE_BASE_OUTPUT_DIR", default=os.path.join(USER_HOME, ".cache", "pdftable"))
 
-    OUTPUT_DIR = FileUtils.join_path(PDFTABLE_BASE_OUTPUT_DIR, "outputs")
-    DATA_DIR = FileUtils.join_path(PDFTABLE_BASE_OUTPUT_DIR, "data")
+    OUTPUT_DIR = os.path.join(PDFTABLE_BASE_OUTPUT_DIR, "outputs")
+    DATA_DIR = os.path.join(PDFTABLE_BASE_OUTPUT_DIR, "data")
 
     SRC_HOME_DIR = getenv("SRC_HOME_DIR", default=SRC_ABS_PATH)
-    SRC_DATA_HOME_DIR = FileUtils.join_path(SRC_HOME_DIR, "data")
-    SRC_IMAGE_DIR = FileUtils.join_path(SRC_DATA_HOME_DIR, "image")
+    SRC_DATA_HOME_DIR = os.path.join(SRC_HOME_DIR, "data")
+    SRC_IMAGE_DIR = os.path.join(SRC_DATA_HOME_DIR, "image")
 
     LOG_LEVEL = "debug"
-    LOG_FILE = FileUtils.join_path(OUTPUT_DIR, "logs", "run.log")
+    LOG_FILE = os.path.join(OUTPUT_DIR, "logs", "run.log")
 
-    PDF_CACHE_BASE = FileUtils.join_path(OUTPUT_DIR, "pdf")
-    HTML_BASE_DIR = FileUtils.join_path(PDF_CACHE_BASE, "inference_results")
-    PDF_PAGE_DIR = FileUtils.join_path(HTML_BASE_DIR, "pdf_image", "pdf_page_cache")
+    PDF_CACHE_BASE = os.path.join(OUTPUT_DIR, "pdf")
+    HTML_BASE_DIR = os.path.join(PDF_CACHE_BASE, "inference_results")
+    PDF_PAGE_DIR = os.path.join(HTML_BASE_DIR, "pdf_image", "pdf_page_cache")
 
     NUMERALS_ZH_DICT = {'零': 0, '一': 1, '二': 2, '两': 2, '三': 3, '四': 4, '五': 5,
                         '六': 6, '七': 7, '八': 8, '九': 9, '十': 10,
@@ -68,9 +66,9 @@ class Constants(object):
     # ocr
     #
     ####################################################################################
-    SCOPE_MODEL_BASE_DIR = FileUtils.join_path(getenv("MODELSCOPE_CACHE", FileUtils.join_path(USER_HOME, ".cache", "modelscope")), "hub")
-    HF_HUB_BASE_DIR = getenv("HF_HUB_CACHE", FileUtils.join_path(USER_HOME, ".cache", "huggingface/hub"))
-    OCR_FONT_BASE_DIR = FileUtils.join_path(SCOPE_MODEL_BASE_DIR, "cycloneboy", "pdftable_config", "fonts")
+    SCOPE_MODEL_BASE_DIR = os.path.join(getenv("MODELSCOPE_CACHE", os.path.join(USER_HOME, ".cache", "modelscope")), "hub")
+    HF_HUB_BASE_DIR = getenv("HF_HUB_CACHE", os.path.join(USER_HOME, ".cache", "huggingface/hub"))
+    OCR_FONT_BASE_DIR = os.path.join(SCOPE_MODEL_BASE_DIR, "cycloneboy", "pdftable_config", "fonts")
 
     FONT_CONFIG = {
         "ch": "chinese_cht.ttf",
@@ -81,6 +79,6 @@ class Constants(object):
         "cyrillic": "cyrillic.ttf",
         "latin": "latin.ttf",
     }
-    DEFAULT_FONT_DIR = FileUtils.join_path(OCR_FONT_BASE_DIR, "chinese_cht.ttf")
+    DEFAULT_FONT_DIR = os.path.join(OCR_FONT_BASE_DIR, "chinese_cht.ttf")
 
-    WANDB_LOG_DIR = FileUtils.join_path(OUTPUT_DIR, "wandb")
+    WANDB_LOG_DIR = os.path.join(OUTPUT_DIR, "wandb")
