@@ -23,8 +23,8 @@ from ..base_utils import BaseUtil
 from ..file_utils import FileUtils
 from ..constant import Constants
 from ..common_utils import CommonUtils
-from pdftable.utils.colormap import colormap
-from pdftable.utils.ocr import OcrCommonUtils
+from ..colormap import colormap
+from . import OcrCommonUtils
 
 """
 OCR 推理工具

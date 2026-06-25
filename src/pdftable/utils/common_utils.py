@@ -13,8 +13,6 @@ from typing import Union, List, Tuple
 import numpy as np
 from transformers import TrainingArguments, HfArgumentParser
 
-from pdftable.entity import HtmlTableCompareType
-from pdftable.entity.common_entity import ModelArguments, DataTrainingArguments
 from .base_utils import BaseUtil
 from .file_utils import FileUtils
 from .logger_utils import logger
@@ -320,11 +318,13 @@ class CommonUtils(BaseUtil):
         return need_run_ids
 
     @staticmethod
-    def parse_model_and_data_args(show_info=True) -> Tuple[ModelArguments, DataTrainingArguments, TrainingArguments]:
+    def parse_model_and_data_args(show_info=True):
         """
         解析命令行参数 model_args, data_args
         :return:
         """
+        from pdftable.entity.common_entity import ModelArguments, DataTrainingArguments
+
         parser = HfArgumentParser(
             (ModelArguments, DataTrainingArguments, TrainingArguments))
         model_args, data_args, training_args = parser.parse_args_into_dataclasses()
@@ -375,6 +375,8 @@ class CommonUtils(BaseUtil):
         :param label_structure_cells:
         :return:
         """
+        from pdftable.entity import HtmlTableCompareType
+
         pred_row_total = len(pred_structure_cells)
         label_row_total = len(label_structure_cells)
 
