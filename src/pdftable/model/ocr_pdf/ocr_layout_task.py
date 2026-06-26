@@ -152,7 +152,7 @@ class OcrLayoutTask(BaseInferTask):
                         new_result.append(item)
                     FileUtils.save_to_json(file_name, new_result)
 
-        logger.info(f"推理结束：{len(predict_result)} - 耗时：{use_time:.3f} s / {use_time / 60:.3f} min.")
+        logger.info(f"Finished postprocessing: {len(predict_result)} - Time taken: {use_time:.3f}s / {use_time / 60:.3f}min.")
 
         return results
 

@@ -68,7 +68,7 @@ class OcrTablePreprocessTask(object):
             image_name = FileUtils.join_path(self.output_dir, png_filename)
             if src_id is not None and FileUtils.check_file_exists(cache_name):
                 image_name = cache_name
-                logger.info(f"读取PDF缓存图片：{image_name}")
+                logger.info(f"Read cachde images from pdf: {image_name}")
             else:
                 if src_id is not None:
                     image_name = cache_name
@@ -93,7 +93,7 @@ class OcrTablePreprocessTask(object):
         :return:
         """
 
-        logger.info(f"开始图片旋转微调修复: {image_name}")
+        logger.info(f"Start fine-tuning and image rotation: {image_name}")
         rotated_image, angle2 = PdfImageProcessor.rotate_image(image_name, save_image_file=image_name,
                                                                threshold_block_size=15,
                                                                threshold_constant=-2,
@@ -103,7 +103,7 @@ class OcrTablePreprocessTask(object):
                                                                diff_angle=400,
                                                                angle_threshold=0.2
                                                                )
-        logger.info(f"完成图片旋转微调修复: {image_name}")
+        logger.info(f"Finished fine-tuning and image rotation: {image_name}")
 
         # estimated_angle = get_angle(image=image_full)
         # logger.info(f"旋转微调修复[skew]: {estimated_angle}")
@@ -155,9 +155,10 @@ class OcrTablePreprocessTask(object):
                 shutil.move(image_name1, image_name)
                 image_full = image_full2
 
-                logger.info(f"pdf图片文字方向分类，逆时针旋转{angle}度：{image_name}")
+                logger.info(f"Rotate pdf counterclockwise by {angle} degrees: {image_name}")
             else:
                 logger.info(f"pdf图片文字方向分类，不旋转：{angle} - {angle2}")
+                logger.info(f"Text rotation detected but not adjusted?")
 
             metric["angle2"] = angle2
             metric["score2"] = image_orientation_result2.image_orientation_score
@@ -190,7 +191,7 @@ class OcrTablePreprocessTask(object):
         run_time = TimeUtils.now_str_short()
 
         is_pdf = FileUtils.is_pdf_file(inputs)
-        logger.info(f"数据源是{'PDF' if is_pdf else '图片'}: {inputs}")
+        logger.info(f"File is {'PDF' if is_pdf else 'image'}: {inputs}")
 
         raw_filename = FileUtils.get_file_name(inputs)
 

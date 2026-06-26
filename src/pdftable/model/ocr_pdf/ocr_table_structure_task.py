@@ -316,7 +316,7 @@ class OcrTableStructureTask(BaseInferTask):
                                                           add_end="_table_structure_post.html")
 
                 if not self.table_structure_merge:
-                    logger.info(f"没有采用TSR merge模型，生成table_cell")
+                    logger.info(f"TSR merge wasn't used to generate table_cell")
                     parser = TableCellExtractFromPdf(output_dir=self.output_dir,
                                                      line_tol=10,
                                                      debug=self.debug)
@@ -443,6 +443,7 @@ class OcrTableStructureTask(BaseInferTask):
             cv2.imwrite(save_image_file, src_img)
 
             logger.info(f"保存表格交点图像：{save_image_file}")
+            logger.info(f"Save the intersections of the table lines?")
 
         min_col = min(cols)
         max_col = max(cols)
@@ -477,7 +478,7 @@ class OcrTableStructureTask(BaseInferTask):
             if not cell.check_pred_logit():
                 logit_diff_total += 1
                 # logger.info(f"cell logit axis not match: {index} - {cell}")
-        logger.info(f"cell logit axis not match: {logit_diff_total} -总共：{len(all_cell_results)}")
+        logger.info(f"cell logit axis not match: {logit_diff_total} - Total: {len(all_cell_results)}")
 
         if self.debug:
             self.show_table_cell(table_cells=all_cell_results,
@@ -509,7 +510,7 @@ class OcrTableStructureTask(BaseInferTask):
         FileUtils.check_file_exists(save_image_file)
         cv2.imwrite(save_image_file, src_img)
 
-        logger.info(f"保存表格cell图像：{len(table_cells)} - {save_image_file}")
+        logger.info(f"Save an image of the table cell: {len(table_cells)} - {save_image_file}")
         return save_image_file
 
     def post_process_bbox_and_logits_v2(self, table_bboxs, logits, image_file, line_tol=10, line_diff=0.5):

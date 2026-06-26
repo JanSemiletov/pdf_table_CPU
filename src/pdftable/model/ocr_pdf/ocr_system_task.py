@@ -143,7 +143,7 @@ class OcrSystemTask(object):
             init_model.append(self.table_structure_recognizer.task)
 
         use_time = time.time() - start
-        logger.info(f"加载OCR模型完毕： {len(init_model)} - {init_model}, 耗时：{use_time:3f} s.")
+        logger.info(f"OCR model loaded: {len(init_model)} - {init_model}, time taken: {use_time:3f}s")
 
     def text_detection(self, image):
         start = time.time()
@@ -154,7 +154,8 @@ class OcrSystemTask(object):
         result = self.text_detector(image)
         det_result = result[0]
         use_time = time.time() - start
-        logger.info(f"检测耗时：{use_time:3f} s. det_result: ")
+        logger.info(f"Time taken for text detection: {use_time:3f}s")
+        logger.info(f"det_result: f{det_result}")
 
         # sort detection result with coord
         det_result_list = det_result.tolist()
@@ -223,7 +224,8 @@ class OcrSystemTask(object):
         result = self.layout_detector(image)
         layout_result = result[0]
         use_time = time.time() - start
-        logger.info(f"版面分析检测耗时：{use_time:3f} s. layout_result: {layout_result}")
+        logger.info(f"Time taken for layout analysis:{use_time:3f}s")
+        logger.info(f"layout_result: {layout_result}")
 
         result = layout_result
         metric = {
@@ -245,7 +247,8 @@ class OcrSystemTask(object):
         result = self.table_cell_detector(image, is_pdf=is_pdf, page=page, ocr_system_output=ocr_system_output)
         table_cell_result = result[0]
         use_time = time.time() - start
-        logger.info(f"表格结构Cell检测耗时：{use_time:3f} s. table_cell_result: {len(table_cell_result)}")
+        logger.info(f"Time taken for table cell detection: {use_time:3f}s")
+        logger.info(f"table_cell_result: {len(table_cell_result)}")
 
         result = table_cell_result
         metric = {
@@ -263,7 +266,8 @@ class OcrSystemTask(object):
         start = time.time()
         text_result = self.pdf_text_recognizer(ocr_system_output)
         use_time = time.time() - start
-        logger.info(f"pdf文本提取耗时：{use_time:3f} s. text_result: {len(text_result)}")
+        logger.info(f"Time taken for pdf text extraction: {use_time:3f}s")
+        logger.info(f"text_result: {len(text_result)}")
 
         metric = {
             "use_time": use_time
@@ -286,7 +290,7 @@ class OcrSystemTask(object):
             out_preds = self.text_recognizer(image)
         except Exception as e:
             traceback.print_exc()
-            logger.warning(f"识别文字异常：{e}")
+            logger.warning(f"Exception during text recognition: {e}")
             out_preds = [""]
 
         preds = {"text": out_preds[0]}
@@ -312,7 +316,8 @@ class OcrSystemTask(object):
         use_times = []
         output = []
         total = len(det_result)
-        logger.info(f"识别开始：总共待识别：{total} 个。")
+        logger.info(f"Starting text recognition")
+        logger.info(f"Items to be recognized: {total}")
         for i in range(det_result.shape[0]):
             pts = OcrCommonUtils.order_point(det_result[i])
             image_crop = OcrCommonUtils.crop_image(image_full, pts)
@@ -333,7 +338,7 @@ class OcrSystemTask(object):
             "avg_use_time": avg_use_time,
             "total": len(use_times),
         }
-        logger.info(f"识别结束：{metric}")
+        logger.info(f"End of text recognition: {metric}")
 
         ocr_cells = []
         for one_item in output:
@@ -353,7 +358,8 @@ class OcrSystemTask(object):
         ocr_system_output = self.ocr_table_to_html(ocr_system_output)
 
         use_time = time.time() - start
-        logger.info(f"表格内容转html耗时：{use_time:3f} s. 提取表格数量: {len(ocr_system_output.table_cell_result)}")
+        logger.info(f"Time taken to convert table content to HTML: {use_time:3f}s")
+        logger.info(f"Number of tables extracted: {len(ocr_system_output.table_cell_result)}")
 
         result = ocr_system_output
         metric = {
@@ -372,7 +378,7 @@ class OcrSystemTask(object):
         ocr_system_output = self.ocr_to_html(ocr_system_output)
 
         use_time = time.time() - start
-        logger.info(f"OCR内容转html耗时：{use_time:3f} s.")
+        logger.info(f"Time taken to convert OCR result to HTML: {use_time:3f}s")
 
         result = ocr_system_output
         metric = {
@@ -391,7 +397,7 @@ class OcrSystemTask(object):
         # ocr_system_output = self.ocr_result_to_db(ocr_system_output)
 
         use_time = time.time() - start
-        logger.info(f"OCR结果保存数据库耗时：{use_time:3f} s.")
+        logger.info(f"Time taken to save OCR result to DB: {use_time:3f}s")
 
         result = ocr_system_output
         metric = {
@@ -413,7 +419,8 @@ class OcrSystemTask(object):
         degree_0_total = 0
         degree_180_total = 0
         total = len(det_result)
-        logger.info(f"文字方向识别开始：总共待识别：{total} 个。")
+        logger.info(f"Starting text orientation recognition")
+        logger.info(f"Number of texts to be recognized: {total}")
         start = time.time()
         for i in range(det_result.shape[0]):
             pts = OcrCommonUtils.order_point(det_result[i])
@@ -441,7 +448,7 @@ class OcrSystemTask(object):
             "avg_use_time": avg_use_time,
             "total": total,
         }
-        logger.info(f"文字方向识别结束：{metric}")
+        logger.info(f"End of text orientation recognition: {metric}")
 
         return orientation, metric
 
@@ -459,7 +466,7 @@ class OcrSystemTask(object):
         image_full, raw_metric = self.image_pre_process_task(inputs, src_id=src_id)
 
         use_time = time.time() - start
-        logger.info(f"图片预处理【图片方向旋转,图片小角度微调旋转】耗时：{use_time:3f} s.")
+        logger.info(f"Time taken for image preprocessing (image rotation, fine-tuning of small angles): {use_time:3f}s")
 
         image_name = raw_metric["image_name"]
 
@@ -473,6 +480,7 @@ class OcrSystemTask(object):
                                                                      angle=270,
                                                                      save_image_file=image_name)
                 logger.info(f"pdf图片文本框宽度和高度之比，逆时针旋转90度：{image_name}")
+                logger.info(f"Rotated pdf 90° counterclockwise?")
                 det_result, det_metric = self.text_detection(image_full, )
 
             text_line_result, rec_metric = self.text_line_orientation(det_result=det_result, image_full=image_full)
@@ -482,9 +490,10 @@ class OcrSystemTask(object):
                                                                      angle=180,
                                                                      save_image_file=image_name)
                 logger.info(f"pdf图片文本方向180度，顺时针旋转180度：{image_name}")
-                det_result = None
+                logger.info(f"Rotated pdf 180°?")
+                et_result = None
         else:
-            logger.info(f"数字型pdf不进行文本方向校验：{image_name}")
+            logger.info(f"No text orientation check on digital pdf：{image_name}")
 
         result = image_full
         metric = {
@@ -502,7 +511,9 @@ class OcrSystemTask(object):
         for item in ocr_result:
             output.append([item.index, item.text, ','.join([str(e) for e in list(item.bbox.reshape(-1))])])
 
-        ocr_result_pd = pd.DataFrame(output, columns=['检测框序号', '行识别结果', '检测框坐标'])
+        ocr_result_pd = pd.DataFrame(output, columns=['box number', 
+                                                      'line orientation result', 
+                                                      'box coordinates'])
 
         return ocr_result_pd
 
@@ -518,6 +529,7 @@ class OcrSystemTask(object):
                                                                  angle=270,
                                                                  save_image_file=image_name)
             logger.info(f"pdf图片文本框宽度和高度之比，逆时针旋转90度：{image_name}")
+            logger.info(f"Rotated pdf 90° counterclockwise?")
             det_result, det_metric = self.text_detection(image_full, )
 
         ocr_result, rec_metric = self.text_recognition(det_result=det_result, image_full=image_full)
@@ -529,6 +541,7 @@ class OcrSystemTask(object):
                                                               angle=180,
                                                               save_image_file=image_name)
         logger.info(f"pdf图片宽需要翻转，逆时针旋转180度：{image_name}")
+        logger.info(f"Rotated pdf 180°?")
         det_result2, det_metric2 = self.text_detection(image_full2, )
         ocr_result2, rec_metric2 = self.text_recognition(det_result=det_result2, image_full=image_full2)
         ocr_text2 = [one_item.text for one_item in ocr_result2]
@@ -545,7 +558,7 @@ class OcrSystemTask(object):
         run_time = TimeUtils.now_str_short()
 
         is_pdf = FileUtils.is_pdf_file(inputs)
-        logger.info(f"数据源是{'PDF' if is_pdf else '图片'}: {inputs}")
+        logger.info(f"File is {'PDF' if is_pdf else 'image'}: {inputs}")
 
         raw_filename = FileUtils.get_file_name(inputs)
 
@@ -562,7 +575,7 @@ class OcrSystemTask(object):
             run_time = TimeUtils.now_str_short()
 
         is_pdf = FileUtils.is_pdf_file(inputs)
-        logger.info(f"数据源是{'PDF' if is_pdf else '图片'}: {inputs}")
+        logger.info(f"File is {'PDF' if is_pdf else 'image'}: {inputs}")
 
         raw_filename = FileUtils.get_file_name(inputs)
 
@@ -610,7 +623,8 @@ class OcrSystemTask(object):
 
         # 表格 cell 提取
         if self.config.table_structure_merge:
-            logger.info(f"表格结构识别采用: Lore和LineCell两个模型合并结果")
+            #logger.info(f"表格结构识别采用: Lore和LineCell两个模型合并结果")
+            logger.info(f"Table structure recognition uses Lore and LineCell")
             table_cell_result, table_cell_metric = self.table_cell_detection(inputs, is_pdf=is_pdf,
                                                                              page=page,
                                                                              ocr_system_output=ocr_system_output)
@@ -671,7 +685,7 @@ class OcrSystemTask(object):
             ocr_to_db_result, ocr_to_db_metric = self.ocr_result_save_to_db(ocr_system_output)
             metric["ocr_to_db"] = ocr_to_db_metric
 
-        logger.info(f"OCR识别结束：{metric}")
+        logger.info(f"Finished OCR: {metric}")
 
         if self.debug:
             ocr_result_json_file = FileUtils.join_path(self.output_dir, f"ocr_{raw_filename}_{run_time}.json")
@@ -754,7 +768,7 @@ class OcrSystemTask(object):
                                                    add_parent=True,
                                                    end_with=end_with,
                                                    sort=True, )
-        logger.info(f"总共需要提取：{len(file_list)}")
+        logger.info(f"Number of files: {len(file_list)}")
 
         begin = time.time()
 
@@ -779,8 +793,9 @@ class OcrSystemTask(object):
             all_result.append(one_result)
 
         use_time = time.time() - begin
-        logger.info(f"解析完成[{self.predictor_type}], 耗时：{use_time:.3f} s / {use_time / 60:.3f} min. "
-                    f"总量：{len(file_list)}")
+        logger.info(f"Finished parsing[{self.predictor_type}]")
+        logger.info(f"Time taken: {use_time:.3f}s / {use_time / 60:.3f}min"
+                    f"Number of files: {len(file_list)}")
 
         total_time = {}
         for key, val in all_use_time.items():
@@ -791,8 +806,8 @@ class OcrSystemTask(object):
 
         all_total_time = sum(total_time.values())
         for key, val in total_time.items():
-            logger.info(
-                f"解析任务[{key}], 耗时：{val:.3f} s / {val / 60:.3f} min. 耗时总的占比：{val / all_total_time:.3f} "
-                f"总量：{len(file_list)}")
+            logger.info(f"Finished task[{key}]")
+            logger.info(f"Time taken: {val:.3f}s / {val / 60:.3f}min. percentage of time spent: {val / all_total_time:.3f}"
+                f"Number of files: {len(file_list)}")
 
         return all_result
