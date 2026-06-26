@@ -188,7 +188,8 @@ class OcrSystemTask(object):
 
             outputs = []
             total = len(layout_tables)
-            logger.info(f"表格结构识别开始：总共待识别：{total} 个。")
+            logger.info(f"Starting table structure recognition")
+            logger.info(f"Number of tables to recognize: {total}")
             for index, table in enumerate(layout_tables):
                 bbox = table["bbox"]
                 save_name = FileUtils.join_path(self.output_dir, f"{FileUtils.get_file_name(image)}_{index}.jpg")
@@ -203,7 +204,13 @@ class OcrSystemTask(object):
             result = self.table_structure_recognizer(image)
         table_structure_result = result[0]
         use_time = time.time() - start
-        logger.info(f"表格结构检测耗时：{use_time:3f} s. 表格数量: {len(table_structure_result['structure_str_list'])}")
+        logger.info(f"Time to check table structure: {use_time:3f}s")
+        num_tables = 0 
+        try:
+            num_tables = len(table_structure_result["structure_str_list"]) 
+        except:
+            pass
+        logger.info(f"Number of tables: {num_tables}")
 
         result = table_structure_result
         metric = {
