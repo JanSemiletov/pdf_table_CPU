@@ -67,7 +67,7 @@ class OcrToHtmlTask(object):
         table_html_str = "\n".join(html) + "\n"
         save_html_file = FileUtils.join_path(self.output_dir, f"{ocr_system_output.raw_filename}.html")
         FileUtils.save_to_text(save_html_file, table_html_str)
-        logger.info(f"保存识别的html: {save_html_file}")
+        logger.info(f"Saving html file: {save_html_file}")
         ocr_system_output.save_html_file = save_html_file
 
         return metric
@@ -121,7 +121,7 @@ class OcrToHtmlTask(object):
             is_image = table["is_image"]
 
             if is_image:
-                logger.info(f"当前表格是图片误识别：{table_idx} - {table['bbox']}")
+                logger.info(f"Table is recognized as image:{table_idx} - {table['bbox']}")
                 continue
 
             is_layout_figure = table["is_layout_figure"]
@@ -148,15 +148,15 @@ class OcrToHtmlTask(object):
 
     def __call__(self, ocr_system_output: OcrSystemModelOutput):
         start = time.time()
-        logger.info(f"开始OCR转html")
+        logger.info(f"Started OCR to html conversion")
         metric = self.convert_to_html(ocr_system_output=ocr_system_output)
 
         use_time = time.time() - start
         result_dir_url = CommonUtils.get_result_http_server(output_dir=ocr_system_output.save_html_file)
 
-        logger.info(f"结束OCR转html, 耗时：{use_time:.3f} s, "
-                    f"提取表格数量：{len(ocr_system_output.table_cell_result)} 个。 "
-                    f"结果url: {result_dir_url}")
+        logger.info(f"Finished OCR to html conversion, time taken: {use_time:.3f}s"
+                    f"Number of tables: {len(ocr_system_output.table_cell_result)}"
+                    f"Result url: {result_dir_url}")
         return ocr_system_output
 
     def build_layout_image(self, match_figure, ocr_system_output: OcrSystemModelOutput):
@@ -189,7 +189,7 @@ class OcrToHtmlTask(object):
 
         save_image_file = FileUtils.join_path(self.output_dir, relative_dir)
         cv2.imwrite(save_image_file, image)
-        logger.info(f"保存layout图片：{save_image_file}")
+        logger.info(f"Saved layout image: {save_image_file}")
 
         height = abs(bbox[3] - bbox[1])
         width = bbox[2] - bbox[0]

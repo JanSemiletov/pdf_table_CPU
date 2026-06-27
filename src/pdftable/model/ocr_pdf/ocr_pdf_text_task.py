@@ -55,14 +55,15 @@ class OcrPdfTextTask(object):
 
     def __call__(self, ocr_system_output: OcrSystemModelOutput, layout_kwargs=None) -> List[OcrCell]:
         start = time.time()
-        logger.info(f"开始PDF提取text。")
+        logger.info(f"Started extracting text from PDF")
         result_text_cells = self.extract_text(ocr_system_output=ocr_system_output)
         text_cells = self.convert_text_cell_to_ocr_cell(result_text_cells)
         self.show_text_cells(ocr_system_output=ocr_system_output, ocr_cells=text_cells)
 
         use_time = time.time() - start
-        logger.info(f"结束PDF提取text, 耗时：{use_time} s, "
-                    f"提取text数量：{len(text_cells)} 个。")
+        logger.info(f"Finished extracting text from PDF")
+        logger.info(f"Time taken: {use_time}s")
+        logger.info(f"Number of text cells: {len(text_cells)}")
         return text_cells
 
     def extract_text(self, ocr_system_output: OcrSystemModelOutput, layout_kwargs=None):
@@ -114,7 +115,7 @@ class OcrPdfTextTask(object):
                     # if match_image.name not in [item.name for item in add_images]:
                     #     add_images.append(match_image)
                     table["is_image"] = True
-                    logger.info(f"当前table是误识别：{index} - {table} - 匹配到图片：{match_image.name}")
+                    logger.info(f"Misidentified table: {index} - {table} - Image found: {match_image.name}")
                     continue
 
                 image_table_cells = deepcopy(table["table_cells"])
@@ -170,7 +171,7 @@ class OcrPdfTextTask(object):
                     raw_text = image_info["save_name"]
                 else:
                     raw_text = ""
-                    logger.info(f"没有找到对应的PDF IMAGE: {cell}")
+                    logger.info(f"No matching PDF image found: {cell}")
             else:
                 raw_text = cell.get_text().strip("\n")
 

@@ -106,7 +106,7 @@ class OcrTableToHtmlTask(object):
                 raw_table_cells = table["table_cells"]
                 is_image = table["is_image"]
                 if is_image:
-                    logger.info(f"当前表格是图片误识别【PDF图片】：{table_idx} - {table_bbox}")
+                    logger.info(f"Table was recognized as image (pdf image): {table_idx} - {table_bbox}")
                     continue
 
                 match_table_flag, match_table = TableProcessUtils.filter_layout_figure(layout_result=layout_result,
@@ -127,7 +127,7 @@ class OcrTableToHtmlTask(object):
                 table["is_layout_figure"] = match_flag
                 table["match_figure"] = match_figure
                 if match_flag:
-                    logger.info(f"当前表格是图片误识别【Layout图片】：{table_idx} - {table_bbox} ->layout: {match_figure}")
+                    logger.info(f"Table was recognized as image (layout image): {table_idx} - {table_bbox} ->layout: {match_figure}")
                     continue
 
                 table_cells = []
@@ -173,7 +173,7 @@ class OcrTableToHtmlTask(object):
 
             except Exception as e:
                 traceback.print_exc()
-                logger.error(f"提取表格异常：{self.src_id} - {table_idx}")
+                logger.error(f"Table retrieval error: {self.src_id} - {table_idx}")
 
         return metric
 
@@ -233,7 +233,7 @@ class OcrTableToHtmlTask(object):
 
         save_db_html_file = save_html_file.replace(".html", "_db.html")
         FileUtils.save_to_text(save_db_html_file, "\n".join(db_table_html) + "\n")
-        logger.info(f"保存table cell html：{save_html_file}")
+        logger.info(f"Saved table cell html: {save_html_file}")
 
         metric = {
             "table_idx": table_idx,
@@ -285,7 +285,7 @@ class OcrTableToHtmlTask(object):
 
         save_db_html_file = save_html_file.replace(".html", "_db.html")
         FileUtils.save_to_text(save_db_html_file, "".join(pred_html))
-        logger.info(f"保存table cell html：{save_html_file}")
+        logger.info(f"Saved table cell html: {save_html_file}")
 
         metric = {
             "table_idx": table_idx,
@@ -333,10 +333,11 @@ class OcrTableToHtmlTask(object):
 
     def __call__(self, ocr_system_output: OcrSystemModelOutput):
         start = time.time()
-        logger.info(f"开始表格结构和OCR识别合并提取TABLE。")
+        logger.info(f"Started converting table to html")
         metric = self.convert_table_to_html(ocr_system_output=ocr_system_output)
 
         use_time = time.time() - start
-        logger.info(f"结束表格结构和OCR识别合并提取TABLE, 耗时：{use_time} s, "
-                    f"提取表格数量：{len(ocr_system_output.table_cell_result)} 个。")
+        logger.info(f"Extracted table by merging table structure and OCR recognition")
+        logger.info(f"Time taken: {use_time}s")
+        logger.info(f"Number of tables: {len(ocr_system_output.table_cell_result)}")
         return ocr_system_output

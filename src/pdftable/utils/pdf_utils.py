@@ -167,7 +167,7 @@ class PdfUtils(BaseUtil):
         :param keep_page_number:
         :return:
         """
-        logger.info(f"开始提取pdf2text: {file_name}")
+        logger.info(f"Started extracting pdf to text: {file_name}")
 
         # temp_file_name = f"{FileUtils.get_parent_dir_name(file_name)}/{FileUtils.get_file_name(file_name)}"
         temp_file_name = FileUtils.get_file_name(file_name)
@@ -209,8 +209,10 @@ class PdfUtils(BaseUtil):
 
         FileUtils.dump_json(metric_json_file, all_metric)
 
-        logger.info(
-            f"提取pdf:{'成功' if extract_success else '失败'} -  {file_name},耗时：{all_metric['use_time']} s text: {text_save_file} metric: {metric_json_file}")
+        logger.info(f"Extract pdf:{'Success' if extract_success else 'Failure'} -  {file_name}")
+        logger.info(f"Time taken: {all_metric['use_time']}s")
+        logger.info(f"text: {text_save_file}")
+        logger.info(f"metric: {metric_json_file}")
         # logger.info(f"all_metric：{all_metric}")
 
         return extract_success, page_result, all_metric
@@ -226,7 +228,7 @@ class PdfUtils(BaseUtil):
         usetime = 0
         try:
             start_time = time.time()
-            logger.info(f"开始下载文件: {file_url} -> {file_name}")
+            logger.info(f"Started downloading file: {file_url} -> {file_name}")
             FileUtils.check_file_exists(filename=file_name)
             headers = PdfUtils.get_user_agent()
             # urllib.request.urlretrieve(url=file_url, filename=file_name)
@@ -236,15 +238,15 @@ class PdfUtils(BaseUtil):
                 with open(file_name, 'wb+') as f:
                     f.write(r.content)
             else:
-                logger.info(f"文件不存在：{file_url}")
+                logger.info(f"File does not exist: {file_url}")
 
             end_time = time.time()
             usetime = end_time - start_time
-            logger.info(f"下载完成一个文件,耗时：{usetime} -> {file_url}")
+            logger.info(f"Downloaded file, time taken: {usetime} -> {file_url}")
 
         except Exception as e:
             traceback.print_exc()
-            logger.info(f"下载文件出错: {file_url} -> {file_name}")
+            logger.info(f"Error downloading file: {file_url} -> {file_name}")
             logger.error(e)
 
         return usetime
@@ -842,12 +844,12 @@ class PdfUtils(BaseUtil):
 
             first_width = abs(col_pairs[0])
             if first_width < last_merge_threold and first_width < avg_width * 0.2:
-                logger.info(f"第一个宽度太小过滤掉：{first_width} - total:{total} - avg_width: {avg_width:.2f} - {ret}")
+                logger.info(f"Filtered out first line because it was too thin: {first_width} - total:{total} - avg_width: {avg_width:.2f} - {ret}")
                 ret = ret[1:]
 
             last_width = abs(col_pairs[-1])
             if last_width < last_merge_threold and last_width < avg_width * 0.2:
-                logger.info(f"最后一个宽度太小过滤掉：{last_width} - total:{total} - avg_width: {avg_width:.2f} - {ret}")
+                logger.info(f"Filtered out last line because it was too thin: {last_width} - total:{total} - avg_width: {avg_width:.2f} - {ret}")
                 ret = ret[:-1]
 
         return ret
@@ -1264,10 +1266,11 @@ class PdfUtils(BaseUtil):
         try:
             doc = fitz.open(file_name)
             page_count = doc.page_count
-            logger.info(f"开始提取图片型PDF中的图片: total page - {page_count}")
+            logger.info(f"Started extracting images from image-based pdfs")
+            logger.info(f"Number of pages: {page_count}")
         except Exception as e:
             traceback.print_exc()
-            logger.warning(f"提取图片型PDF中的图片异常：{file_name} - {e}")
+            logger.warning(f"Exception when extracting image from pdf: {file_name} - {e}")
             return 0
 
         FileUtils.check_file_exists(FileUtils.join_path(output_dir, "demo.txt"))
@@ -1286,18 +1289,18 @@ class PdfUtils(BaseUtil):
                 width = img[2]
                 height = img[3]
                 if min(width, height) <= dim_limit:
-                    logger.info(f"当前图片被过滤，宽度高度小于：{dim_limit}")
+                    logger.info(f"Image has been filtered, width and height smaller than: {dim_limit}")
                     continue
                 image = PdfUtils.recoverpix(doc, img)
                 n = image["colorspace"]
                 imgdata = image["image"]
 
                 if len(imgdata) <= abs_size:
-                    logger.info(f"当前图片被过滤，图片占用大小：{abs_size}")
+                    logger.info(f"Image has been filtered, file size: {abs_size}")
                     continue
                 current_rel_size = len(imgdata) / (width * height * n)
                 if current_rel_size <= rel_size:
-                    logger.info(f"当前图片被过滤，image size ratio：{current_rel_size} 大小：{rel_size}")
+                    logger.info(f"Image has been filtered, image size ratio: {current_rel_size} 大小：{rel_size}")
                     continue
 
                 xref_str = f"_{xref}" if add_xref else ""
@@ -1343,8 +1346,11 @@ class PdfUtils(BaseUtil):
         imglist = list(set(imglist))
 
         total_image = len(xreflist)
-        logger.info(f"提取图片型PDF中的图片，耗时：{use_time:.3f} s, "
-                    f"总共{len(imglist)}张图片，提取：{total_image}张图片, 页面：{len(pdf_page)} 其他：{len(other_page)}。"
+        logger.info(f"Finished extracting images from image-based pdfs")
+        logger.info(f"Time taken: {use_time:.3f}s")
+        logger.info(f"Number of images: {len(imglist)}")
+        logger.info(f"Number of extracted images: {total_image}")
+        logger.info(f"Number of pages: {len(pdf_page)} Other pages: {len(other_page)}。"
                     f"{file_name} - {output_dir}")
 
         return pdf_page, other_page
@@ -1402,7 +1408,7 @@ class PdfUtils(BaseUtil):
 
             image_file = FileUtils.join_path(output_dir, new_name)
             shutil.move(raw_image_name, image_file)
-            logger.info(f"图片重命名：{raw_image_name} -> {image_file}")
+            logger.info(f"Renamed image: {raw_image_name} -> {image_file}")
 
             if min(width, height) >= page_width_limit:
                 pdf_page.append(image_file)
@@ -1415,7 +1421,7 @@ class PdfUtils(BaseUtil):
                 PdfImageProcessor.rotate_image_angle_v2(image=src_image,
                                                         angle=270,
                                                         save_image_file=image_file)
-                logger.info(f"pdf图片宽度大于高度，逆时针旋转90度：{image_file}")
+                logger.info(f"PDF image width greater than height, rotate 90° counterclockwise: {image_file}")
 
             image_info = {
                 "key": PdfUtils.get_pdf_image_key(image),
@@ -1430,15 +1436,17 @@ class PdfUtils(BaseUtil):
                 "image_size": image.srcsize,
             }
             image_infos.append(image_info)
-            logger.info(f"保存PDF图片: {index} - {image_info}")
+            logger.info(f"Saved PDF image: {index} - {image_info}")
 
         use_time = time.time() - begin_time
 
         total_image = len(images)
-        logger.info(f"提取图片型PDF中的图片，耗时：{use_time:.3f} s, "
-                    f"总共{total_image}张图片，提取：{total_image}张图片, 页面：{len(pdf_page)} 其他：{len(other_page)}。"
+        logger.info(f"Finished extracting images from image-based pdfs"
+                    f"Time taken: {use_time:.3f}s"
+                    f"Number of images: {total_image}"
+                    f"Number of extracted images: {total_image}"
+                    f"Number of pages: {len(pdf_page)}"
                     f"{file_name} - {output_dir}")
-
         return save_page_image_file
 
     @staticmethod
@@ -1477,7 +1485,7 @@ class PdfUtils(BaseUtil):
             most_start_x = PdfUtils.get_pdf_line_begin_x(start_x_dict, font_size=most_font_size)
             most_end_x = deepcopy(end_x_dict_sorted).popitem(last=False)[0]
         except Exception as e:
-            logger.warning(f"段落开始和结束修正,提取异常：{e}")
+            logger.warning(f"Correcting starts and ends of paragraphs, extraction error: {e}")
             pass
 
         for index, cell in enumerate(ocr_cell_content):
@@ -1635,7 +1643,7 @@ class PdfUtils(BaseUtil):
         image_info_file_name = FileUtils.join_path(image_output_dir, "image.json")
         if read_cache and FileUtils.check_file_exists(image_info_file_name):
             image_infos = FileUtils.load_json(image_info_file_name)
-            logger.info(f"总共提取PDF图片【从image.json中读取】: {len(image_infos)} - {image_info_file_name}")
+            logger.info(f"Extracted PDF images from image.json: {len(image_infos)} - {image_info_file_name}")
             pdf_image_mapping = {item["key"]: item for item in image_infos}
             return image_infos, pdf_image_mapping
 
@@ -1661,10 +1669,10 @@ class PdfUtils(BaseUtil):
                 "image_size": image.srcsize,
             }
             image_infos.append(image_info)
-            logger.info(f"保存PDF图片: {index} - {image_info}")
+            logger.info(f"Saved PDF image: {index} - {image_info}")
 
         FileUtils.dump_json(image_info_file_name, image_infos)
-        logger.info(f"总共提取PDF图片: {len(image_infos)} - {image_info_file_name}")
+        logger.info(f"Extracted all images from the PDF: {len(image_infos)} - {image_info_file_name}")
 
         pdf_image_mapping = {item["key"]: item for item in image_infos}
         return image_infos, pdf_image_mapping
@@ -1685,8 +1693,8 @@ class PdfUtils(BaseUtil):
             if images:
                 is_imaged_pdf = True
         use_time = time.time() - begin_time
-        logger.info(f"检测pdf类型，耗时：{use_time:.3f} s. "
-                    f"当前pdf是 {'图片' if is_imaged_pdf else '数字'}型PDF,: {file_name} ")
+        logger.info(f"Detected pdf type, Time taken: {use_time:.3f}s"
+                    f"Current pdf is {'image' if is_imaged_pdf else 'digital'},: {file_name} ")
         return is_imaged_pdf
 
     @staticmethod
@@ -1832,7 +1840,7 @@ class PdfUtils(BaseUtil):
         if area < area_threshold:
             return True
         if min(width, height) <= dim_limit:
-            logger.info(f"当前图片被过滤，宽度高度小于：{dim_limit}")
+            logger.info(f"Image has been filtered because width and height are below: {dim_limit}")
             return True
 
         return False
@@ -1862,10 +1870,10 @@ class PdfUtils(BaseUtil):
                 merger.write(f)
 
             merger.close()
-            logger.info(f"保存拆分的新PDF: 页数：{len(new_pages)} 原始PDF: {total} 页,文件路径：{new_file}")
+            logger.info(f"Saved split PDF: Number of pages: {len(new_pages)} Original pdf: {total} pages, File path: {new_file}")
         except Exception as e:
             traceback.print_exc()
-            logger.error(f"拆分PDF出现异常：{pdf_file}")
+            logger.error(f"Error occured when splitting pdf: {pdf_file}")
 
     @staticmethod
     def extract_pdf_rect(file_name, line_max=2):
