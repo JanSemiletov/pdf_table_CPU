@@ -1630,17 +1630,17 @@ class TableProcessUtils(object):
             widths.append(width)
             heights.append(height)
 
-        try:
-            radio = sum(widths) / sum(heights)
+        flag = False
+        ratio = 0
 
-            flag = False
-            if radio < 1:
+        try:
+            ratio = sum(widths) / sum(heights)
+            if ratio < 1:
                 flag = True
         except ZeroDivisionError:
             logger.info(f"No text detected")
-            flag = False
 
-        logger.info(f"Decide if 90° rotation is necessary: {flag}- width/height ration: {radio} - width: {sum(widths)} -height: {sum(heights)}")
+        logger.info(f"Decide if 90° rotation is necessary: {flag}- width/height ratio: {ratio} - width: {sum(widths)} -height: {sum(heights)}")
         return flag
 
     @staticmethod
