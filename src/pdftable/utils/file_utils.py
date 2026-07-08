@@ -133,10 +133,10 @@ class FileUtils(BaseUtil):
             with open(fp, 'w', encoding='utf8') as f:
                 json.dump(obj, f, ensure_ascii=False, sort_keys=sort_keys, indent=indent, separators=(',', ':'))
             if show_info:
-                logger.info(f'json 文件保存成功，{fp}')
+                logger.info(f'Saved Json file: {fp}')
             return True
         except Exception as e:
-            logger.info(f'json 文件 {obj} 保存失败, {e}')
+            logger.info(f'Failed to save json file: {obj}, {e}')
             return False
 
     @staticmethod
@@ -169,10 +169,10 @@ class FileUtils(BaseUtil):
                     f.write(json.dumps(record, ensure_ascii=False) + '\n')
                 # json.dump(data, f, ensure_ascii=False, indent=4, separators=(',', ':'))
             if show_info:
-                logger.info(f'json line 文件保存成功，{file_name}')
+                logger.info(f'Saved json line file: {file_name}')
             return True
         except Exception as e:
-            logger.info(f'json line 文件 {data} 保存失败, {e}')
+            logger.info(f'Failed to save json line file: {data}, {e}')
             return False
 
     @staticmethod
@@ -189,7 +189,7 @@ class FileUtils(BaseUtil):
         dir_name = os.path.dirname(filename)
         if not os.path.exists(dir_name):
             os.makedirs(dir_name, exist_ok=True)
-            print("文件夹不存在,创建目录:{}".format(dir_name))
+            logger.info(f"Folder does not exist, created directory: {dir_name}")
         return os.path.exists(filename)
 
     @staticmethod
@@ -374,7 +374,7 @@ class FileUtils(BaseUtil):
         if isinstance(filepath, str):
             basename = os.path.basename(filepath)
             if not os.path.exists(filepath):
-                print(f"路径不存在:{filepath}")
+                logger.warning(f"path does not exist:{filepath}")
                 return None, None
             elif os.path.isfile(filepath) and basename not in ignore_file_names and ignore_func(filepath):
                 return [filepath], [basename]
@@ -406,7 +406,7 @@ class FileUtils(BaseUtil):
             if os.path.isfile(path):
                 os.remove(path)
                 if show_log:
-                    logger.info(f"删除文件：{path}")
+                    logger.info(f"Deleted file: {path}")
 
     @staticmethod
     def get_path_dir(file_dir, add_parent=False, sort=False, start_with=None):
@@ -855,7 +855,7 @@ class FileUtils(BaseUtil):
             file_list_all.extend(file_list)
 
         # FileUtils.delete_file_list(file_list_all, show_log=False)
-        logger.info(f"删除中间文件:{len(file_list_all)} 个文件。{file_list_all}")
+        logger.info(f"Deleting {len(file_list_all)} files: {file_list_all}")
 
     @staticmethod
     def read_wandb_username():
