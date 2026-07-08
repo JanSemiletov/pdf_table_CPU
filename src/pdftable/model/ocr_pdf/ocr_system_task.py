@@ -332,7 +332,7 @@ class OcrSystemTask(object):
             })
 
         total_use_time = sum(use_times)
-        avg_use_time = total_use_time / len(use_times)
+        avg_use_time = total_use_time / len(use_times) if len(use_times) > 0 else 0
         metric = {
             "use_time": total_use_time,
             "avg_use_time": avg_use_time,
