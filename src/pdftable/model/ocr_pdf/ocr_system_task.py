@@ -442,7 +442,7 @@ class OcrSystemTask(object):
                     f"-degree_180_total: {degree_180_total}")
 
         total_use_time = time.time() - start
-        avg_use_time = total_use_time / total
+        avg_use_time = total_use_time / total if total != 0 else 0
         metric = {
             "use_time": total_use_time,
             "avg_use_time": avg_use_time,
